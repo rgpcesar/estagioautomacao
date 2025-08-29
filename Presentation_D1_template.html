@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mobile Test Automation with Python, UiAutomator2 and Pytest</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            line-height: 1.6;
+            color: #333;
+        }
+        h1, h2, h3 {
+            color: #0056b3;
+        }
+        pre {
+            background-color: #f4f4f4;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+        code {
+            font-family: "Courier New", Courier, monospace;
+            color: #d44950;
+        }
+        .slide {
+            margin-bottom: 40px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <h1>Mobile Test Automation - Day 1</h1>
+    <h3>Introduction + Environment Setup + ADB Basic</h3>
+    
+
+    <div class="slide">
+        <h2>1. Appium Installation and Validation</h2>
+        <h3>Install Appium (via npm or Appium Desktop) and validate the installation with <code>appium --version</code></h3>
+        <p>Appium is an open-source test automation framework for use with native, hybrid, and mobile web apps. It drives iOS, Android, and Windows apps using the WebDriver protocol.</p>
+        <h4>Installation via npm (Node Package Manager):</h4>
+        <p>Ensure you have Node.js and npm installed. Then, run:</p>
+        <pre><code>npm install -g appium</code></pre>
+        <h4>Installation via Appium Desktop:</h4>
+        <p>Download the Appium Desktop client from the official Appium website. It's a GUI wrapper around the Appium server.</p>
+        <h4>Validation:</h4>
+        <p>After installation, open your terminal or command prompt and run:</p>
+        <pre><code>appium --version</code></pre>
+        <p>You should see the installed Appium version.</p>
+    </div>
+
+    <div class="slide">
+        <h2>2. Android Emulator Configuration</h2>
+        <h3>Configure an Android emulator in Android Studio (suggestion: API 36) and launch it via AVD Manager.</h3>
+        <p>An Android Virtual Device (AVD) is a configuration that defines the characteristics of an Android phone, tablet, Wear OS, Android TV, or Android Automotive OS device that you want to simulate in the Android Emulator.</p>
+        <ol>
+            <li>Open Android Studio.</li>
+            <li>Go to <code>Tools > Device Manager</code> (or <code>AVD Manager</code> in older versions).</li>
+            <li>Click <code>Create device</code>.</li>
+            <li>Choose a device definition (e.g., Pixel 4).</li>
+            <li>Select a system image (e.g., API 36 - Android 14/Upside Down Cake). If not downloaded, click the download icon.</li>
+            <li>Click <code>Next</code>, give your AVD a name, and click <code>Finish</code>.</li>
+            <li>In the Device Manager, click the play button next to your AVD to launch the emulator.</li>
+        </ol>
+    </div>
+
+    <div class="slide">
+        <h2>3. ADB (Android Debug Bridge) Setup</h2>
+        <h3>Install and configure ADB, checking that the system PATH includes the Android SDK's <code>platform-tools</code> folder.</h3>
+        <p>ADB is a versatile command-line tool that lets you communicate with a device. The ADB command facilitates a variety of device actions, such as installing and debugging apps, and it provides access to a Unix shell that you can use to run a variety of commands on a device.</p>
+        <ol>
+            <li><strong>Install Android SDK Platform-Tools:</strong> These are usually installed with Android Studio. You can find them in your Android SDK directory (e.g., <code>~/Library/Android/sdk/platform-tools</code> on macOS, <code>C:\Users\YourUser\AppData\Local\Android\sdk\platform-tools</code> on Windows).</li>
+            <li><strong>Add to System PATH:</strong>
+                <ul>
+                    <li><strong>macOS/Linux:</strong> Open your <code>.bash_profile</code>, <code>.zshrc</code>, or equivalent file and add the following line (replace with your actual SDK path):
+                        <pre><code>export PATH=$PATH:/Users/vgm/Library/Android/sdk/platform-tools</code></pre>
+                        Then, run <code>source ~/.bash_profile</code> (or <code>.zshrc</code>) to apply changes.
+                    </li>
+                    <li><strong>Windows:</strong>
+                        <ol>
+                            <li>Right-click on <code>This PC</code> or <code>My Computer</code> and select <code>Properties</code>.</li>
+                            <li>Click on <code>Advanced system settings</code>.</li>
+                            <li>Click on <code>Environment Variables...</code>.</li>
+                            <li>Under <code>System variables</code>, find the <code>Path</code> variable and click <code>Edit...</code>.</li>
+                            <li>Click <code>New</code> and add the path to your <code>platform-tools</code> directory (e.g., <code>C:\Users\YourUser\AppData\Local\Android\sdk\platform-tools</code>).</li>
+                            <li>Click <code>OK</code> on all windows to save changes.</li>
+                        </ol>
+                    </li>
+                </ul>
+            </li>
+            <li><strong>Verify Installation:</strong> Open a new terminal/command prompt and run:
+                <pre><code>adb version</code></pre>
+                You should see the ADB version information.
+            </li>
+        </ol>
+    </div>
+
+    <div class="slide">
+        <h2>4. Basic ADB Commands</h2>
+        <h3>Run a basic ADB command to list connected devices (physical or emulated): <code>adb devices</code></h3>
+        <p>This command lists all connected Android devices and emulators.</p>
+        <pre><code>adb devices</code></pre>
+        <p>Output will look something like:</p>
+        <pre><code>List of devices attached
+emulator-5554   device
+ABCDEF012345    device</code></pre>
+    </div>
+
+    <div class="slide">
+        <h2>5. Install/Uninstall APK via ADB</h2>
+        <h3>Install an .apk app manually on the device/emulator via ADB (e.g. <a href="https://github.com/saucelabs/my-demo-app-android/releases/download/2.2.0/mda-2.2.0-25.apk" target="_blank">Sauce Labs app</a>):  <code>adb install path/to/your/app.apk</code></h3>
+        <p>To install an application package file (APK) on your device:</p>
+        <pre><code>adb install path/to/your/app.apk</code></pre>
+        <p>Example:</p>
+        <pre><code>adb install ~/Downloads/ReclameAqui.apk</code></pre>
+
+        <h3>Uninstall the previously installed app via ADB: <code>adb uninstall package.from.app</code></h3>
+        <p>To uninstall an application, you need its package name.</p>
+        <p><strong>Tip:</strong> Use <code>adb shell pm list packages</code> to find the package name. You can use <code>grep</code> to filter the results:</p>
+        <pre><code>adb shell pm list packages | grep 'saucelabs'</code></pre>
+        <p>Once you have the package name (e.g., <code>com.example.myapp</code>), uninstall it:</p>
+        <pre><code>adb uninstall com.example.myapp</code></pre>
+    </div>
+
+    <div class="slide">
+        <h2>6. Capture Screenshot via ADB</h2>
+        <h3>Capture a screenshot of the device and save it to your computer using ADB:</h3>
+        <pre><code>adb shell screencap -p /sdcard/screen.png</code></pre>
+        <pre><code>adb pull /sdcard/screen.png ./screen.png</code></pre>
+        <p>The first command takes a screenshot on the device and saves it to the specified path on the device's SD card. The second command pulls the screenshot from the device to your local machine.</p>
+    </div>
+
+    <div class="slide">
+        <h2>7. Extract Device Logs</h2>
+        <h3>Extract logs from the device and identify the line where an app is opened: <code>adb logcat | grep “ActivityManager”</code></h3>
+        <p><code>adb logcat</code> displays device logs in real-time. Filtering with <code>grep "ActivityManager"</code> helps to focus on activity-related events, such as app launches.</p>
+        <pre><code>adb logcat | grep "ActivityManager"</code></pre>
+    </div>
+
+    <div class="slide">
+        <h2>8. Copy File to Device</h2>
+        <h3>Copy a file from the computer to the device (e.g. a .txt file): <code>adb push arquivo.txt /sdcard/Download/</code></h3>
+        <p>The <code>adb push</code> command copies a file or directory (and its subdirectories) from your host computer to a device.</p>
+        <pre><code>adb push my_document.txt /sdcard/Download/</code></pre>
+    </div>
+
+    <div class="slide">
+        <h2>9. Reboot Device via ADB</h2>
+        <h3>Restart the device/emulator via ADB and check the automatic reconnection:</h3>
+        <pre><code>adb reboot</code></pre>
+        <pre><code>adb devices  # After reboot</code></pre>
+        <p>The <code>adb reboot</code> command restarts the connected device. After the device reboots, you can use <code>adb devices</code> to confirm it has reconnected.</p>
+    </div>
+
+    <div class="slide">
+        <h2>10. Physical Device Connection</h2>
+        <h3>Now connect a physical device via USB, confirm/clear debug actions on the physical android.</h3>
+        <p>To connect a physical Android device for debugging:</p>
+        <ol>
+            <li><strong>Enable Developer Options:</strong> Go to <code>Settings > About phone</code> and tap <code>Build number</code> seven times.</li>
+            <li><strong>Enable USB Debugging:</strong> In <code>Settings > System > Developer options</code>, enable <code>USB debugging</code>.</li>
+            <li><strong>Connect via USB:</strong> Connect your device to your computer using a USB cable.</li>
+            <li><strong>Authorize Debugging:</strong> On your device, you will see a prompt "Allow USB debugging?". Tap <code>OK</code>.</li>
+            <li><strong>Verify Connection:</strong> Use <code>adb devices</code> to confirm your physical device is listed.</li>
+        </ol>
+    </div>
+
+    <div class="slide">
+        <h2>11. ADB Commands with Multiple Devices (<code>-s <serial></code>)</h2>
+        <h3>Repeat the same ADB actions as before on Physical Android: use <code>-s <serial></code> to specify which device you want to use.</h3>
+        <p>When multiple devices are connected, you need to specify which device to target using the <code>-s <serial></code> flag, where <code><serial></code> is the device's serial number (from <code>adb devices</code> output).</p>
+        <p>Example (assuming <code>ABCDEF012345</code> is your physical device serial):</p>
+        <pre><code>adb -s ABCDEF012345 install path/to/your/app.apk</code></pre>
+        <pre><code>adb -s ABCDEF012345 shell screencap -p /sdcard/screen.png</code></pre>
+    </div>
+
+    <div class="slide">
+        <h2>12. Advanced ADB Commands</h2>
+        <h3>Run ADB commands on both devices (using separate scripts or in parallel):</h3>
+        
+        <h4>Simulate Android Key Events:</h4>
+        <p>Simulate pressing Android keys like Home, Back, and List Apps.</p>
+        <pre><code>adb shell input keyevent KEYCODE_HOME</code></pre>
+        <pre><code>adb shell input keyevent KEYCODE_BACK</code></pre>
+        <pre><code>adb shell input keyevent KEYCODE_APP_SWITCH</code></pre>
+
+        <h4>Simulate Scroll (Swipe):</h4>
+        <p>Simulate a touch swipe gesture. <code><x1> <y1></code> are start coordinates, <code><x2> <y2></code> are end coordinates, and <code><duration></code> is in milliseconds.</p>
+        <pre><code>adb shell input swipe <x1> <y1> <x2> <y2> <duration></code></pre>
+        <p>Example: Scroll down from center of screen</p>
+        <pre><code>adb shell input swipe 500 1000 500 200 500</code></pre>
+
+        <h4>Toggle Wi-Fi and Check Status:</h4>
+        <p>Enable/disable Wi-Fi and check its current state.</p>
+        <pre><code>adb shell svc wifi enable</code></pre>
+        <pre><code>adb shell svc wifi disable</code></pre>
+        <pre><code>adb shell dumpsys wifi | grep "Wi-Fi is"</code></pre>
+
+        <h4>Toggle Airplane Mode:</h4>
+        <p>Enable/disable airplane mode.</p>
+        <pre><code>adb shell settings put global airplane_mode_on 1</code></pre>
+        <pre><code>adb shell am broadcast -a android.intent.action.AIRPLANE_MODE --ez state true</code></pre>
+        <pre><code>adb shell settings put global airplane_mode_on 0</code></pre>
+        <pre><code>adb shell am broadcast -a android.intent.action.AIRPLANE_MODE --ez state false</code></pre>
+
+        <h4>Adjust Screen Brightness:</h4>
+        <p>Set screen brightness (0-255).</p>
+        <pre><code>adb shell settings put system screen_brightness 150</code></pre>
+
+        <h4>Launch an App using ADB:</h4>
+        <p>Launch an app using its package name and launcher activity.</p>
+        <pre><code>adb shell monkey -p com.saucelabs.mydemoapp.android -c android.intent.category.LAUNCHER 1</code></pre>
+
+        <h4>Simulate Vertical Scroll on SauceLabs App (Drawing Screen):</h4>
+        <p>Specific scroll example for the SauceLabs demo app.</p>
+        <pre><code>adb shell input swipe 500 500 500 2000 500</code></pre>
+
+        <h4>Open Real-time Android Log:</h4>
+        <p>View the continuous stream of system messages.</p>
+        <pre><code>adb logcat</code></pre>
+
+        <h4>Record Screen and Save:</h4>
+        <p>Record device screen for a specified duration and pull the video file.</p>
+        <pre><code>adb shell screenrecord --time-limit 10 /sdcard/test.mp4</code></pre>
+        <pre><code>adb pull /sdcard/test.mp4 ./test.mp4</code></pre>
+
+        <h4>UI Dump via ADB:</h4>
+        <p>Capture the current UI hierarchy as an XML file, useful for UI Automator and Appium element identification.</p>
+        <pre><code>adb shell uiautomator dump</code></pre>
+        <pre><code>adb pull /sdcard/window_dump.xml ./window_dump.xml</code></pre>
+    </div>
+
+    <div class="slide">
+        <h2>Conclusion</h2>
+        <p>This presentation covered the essential steps for setting up your mobile test automation environment and performing basic to advanced ADB operations. These skills are fundamental for effective mobile testing with tools like Appium, UiAutomator2, and Pytest.</p>
+        <p>Happy Testing!</p>
+    </div>
+
+</body>
+</html>

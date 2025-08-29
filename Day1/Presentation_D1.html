@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Test Automation with Python, Selenium and Pytest</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            line-height: 1.6;
+            color: #333;
+        }
+        h1, h2, h3 {
+            color: #0056b3;
+        }
+        pre {
+            background-color: #f4f4f4;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+        code {
+              font-family: Consolas,"courier new";
+  color: crimson;
+  background-color: #f1f1f1;
+  padding: 2px;
+  font-size: 105%;
+        }
+        .slide {
+            margin-bottom: 40px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <h1>Web Test Automation - Welcome Interns!</h1>
+    <h3>Introduction + Environment Setup + First Test</h3>
+
+    <div class="slide">
+        <h2>1. Python Setup & Virtual Environment</h2>
+        <h3>Install Python, create a virtual environment, and install dependencies.</h3>
+        <p>First, ensure Python is installed on your system. Then, create a virtual environment to isolate project dependencies.</p>
+        <h4>Install Python:</h4>
+        <p>Search for the version 3.9.6 (Download macOS 64-bit universal2 installer) <a href="https://www.python.org/downloads/macos/" target="_blank">python.org</a>.</p>
+        <p>After install, run on terminal: <i>python3 --version </i></p>
+        <h4>Create and Activate Virtual Environment:</h4>
+        <p><b> What is a virtual environment?</b>
+<li>A Python virtual environment is an isolated environment on your computer where you can run and test your Python projects.</li>
+<li>It allows you to manage project-specific dependencies without interfering with other projects or the original Python installation.</li>
+<li>Think of a virtual environment as a separate container for each Python project. </li>
+<p><b>The use of virtual environments is important because:	</b>	</p>
+<li>Avoids package version conflicts between projects</li>
+<li>Makes projects more portable and reproducible</li>
+<li>Keeps the Python installation on your system clean</li>
+<li>Allows testing with different versions of Python</li>
+
+
+        <pre><code># Create a virtual environment named 'myproject'
+python -m venv myproject
+
+# Activate the virtual environment
+# On macOS/Linux
+source myproject/bin/activate
+<p># On Windows
+myproject\Scripts\activate</code>
+</pre>
+<p>
+Install the cowsay package to test the virtual environment, on terminal    
+<pre>
+<code>pip install cowsay</code> 
+</pre></p>
+<p>Create a file <i>teste.py</i> and insert this short code:</p>
+
+<pre>
+<code>import cowsay
+cowsay.cow("Good Mooooorning!")</code>
+</pre>
+<p>Run on terminal: <i>python test.py</i></p>
+<pre>
+<code>----- OUTPUT -----
+  _________________
+| Good Mooooorning! |
+  =================
+                 \
+                  \
+                    ^__^
+                    (oo)\_______
+                    (__)\       )\/\
+                        ||----w |
+                        ||     ||
+    </code>
+</pre>
+<p>Run on terminal: <i>deactivate</i></p>
+<p>Run again: <i>python test.py</i></p>
+<p>What happened?</p>
+
+<div class="slide">
+        <h2>Core Concepts</h2>
+        <ul>
+            <li><strong>Selenium:</strong> Selenium is an open source framework used to automate web browser testing. It allows developers and testers to simulate user interaction with a browser, such as clicking buttons, filling in forms and navigating between pages. This is done through scripts that control the browser, allowing the automation of functional and regression tests in web applications</li>
+            <li><strong>Pytest:</strong> Pytest is a popular and powerful testing framework for Python, used to write and execute software tests. It is known for its simplicity, flexibility and ease of use, making it a popular choice for both simple unit tests and complex functional tests.</li>
+        </ul>
+    </div>
+
+
+
+<h4>Install Dependencies:</h4>
+<p>With the virtual environment active, install Selenium and Pytest.</p>
+<pre>
+<code>pip install selenium pytest</code>
+<code>pytest --version</code>
+</pre>
+<p>Edit the file <i>teste.py</i> and insert this short code:</p>
+
+<pre>
+<code>import cowsay
+import selenium
+
+cowsay.cow("Good Mooooorning!")   
+
+print("Selenium version:", selenium.__version__)</code>
+</pre>
+        
+
+    </div>
+
+    <div class="slide">
+        <h2>2. Browser Driver Setup</h2>
+        <h3>Download the correct WebDriver for your browser.</h3>
+        <li><strong>WebDriver:</strong> The component that acts as a bridge between your test script (e.g., Selenium) and the web browser. Each browser has its own specific WebDriver (like Chromedriver for Chrome or Geckodriver for Firefox) that translates your script's commands into actions the browser can understand.</li>
+        <p>Selenium requires a WebDriver to interface with your chosen browser. Download the driver that matches your browser and version.</p>
+        <ul>
+            <li><a href="https://googlechromelabs.github.io/chrome-for-testing/" target="_blank">ChromeDriver</a> for Google Chrome.</li>
+            <li><a href="https://github.com/mozilla/geckodriver/releases" target="_blank">GeckoDriver</a> for Mozilla Firefox.</li>
+        </ul>
+        <p>After downloading, place the executable in a directory that is part of your system's PATH (e.g., <code>/usr/local/bin</code> on macOS/Linux or a specific folder on Windows that you add to Environment Variables).</p>
+        <pre><code>sudo mv chromedriver /usr/local/bin/</code></pre>
+    </div>
+
+    <div class="slide">
+        <h2>3. Git Project Initialization</h2>
+        <h3>Set up a Git repository for your project.</h3>
+        <p>Version control is crucial. Initialize a Git repository and create essential files.</p>
+        <h4>
+        Create your git repository
+        </h4>
+        <p>
+<ol>
+  <li>Go to:👉 https://github.com/new</li>
+  <li>Give the repository a name (e.g. estagio-cesar)</li>
+  <li>Choose whether it will be public or private. Don't check the option to create a README, .gitignore or license (this avoids conflicts with the local repository)</li>
+  <li>Click on "Create repository"</li>
+</ol></p>
+        <h4>Initialize Git:</h4>
+<p>Access your project folder and initialize the project</p>
+        <pre><code>cd projeto-automacao
+git init
+</code></pre>
+        <h4>Create <code>requirements.txt</code>:</h4>
+        <p>This file lists your project's dependencies, making it easy for others to set up the environment.</p>
+        <pre><code>pip freeze > requirements.txt</code></pre>
+        <h4>Create <code>README.md</code>:</h4>
+        <p>A README file should explain what the project is and how to set it up.</p>
+        <pre><code># My Test Automation Project
+
+## Setup
+1. Clone the repository.
+2. Create a virtual environment: `python -m venv venv`
+3. Activate it: `source venv/bin/activate`
+4. Install dependencies: `pip install -r requirements.txt`
+5. Run tests: `pytest`
+</code></pre>
+<p>Make the first commit:</p>
+<pre><code>git add README.md
+git add requirements.txt
+git remote add origin https://github.com/<-your_user->/estagio-cesar.git ## <i>git remote add origin https://github.com/rgpcesar/estagio-cesar.git</i>
+git commit -m "My first commit"
+git branch -M main 
+git push -u origin main
+
+#<i>Access your new repository:</i>
+https://github.com/<-your_user->/estagio-cesar/tree/main
+<i>https://github.com/rgpcesar/estagio-cesar/tree/main</i>
+</code></pre>
+    </div>
+
+    <div class="slide">
+        <h2>4. First Test Script</h2>
+        <h3>Write a simple test to open a website and verify its title.</h3>
+        <p>Create a file named <code>test_demo.py</code>. Pytest automatically discovers files prefixed with <code>test_</code>.</p>
+        <pre><code># test_demo.py
+from selenium import webdriver
+
+def test_verify_demoqa_title():
+    driver = webdriver.Chrome()
+    driver.get("https://demoqa.com")
+    assert "DEMOQA" in driver.title
+    driver.quit()
+</code></pre>
+        <p>To run this test, simply execute <code>pytest</code> in your terminal.</p>
+    </div>
+
+    <div class="slide">
+        <h2>5. Using Pytest Fixtures (conftest.py)</h2>
+        <h3>Create a fixture to manage the WebDriver lifecycle.</h3>
+        <p>Fixtures help set up and tear down resources for your tests. Create a <code>conftest.py</code> file in your project's root directory.</p>
+        <pre><code># conftest.py
+import pytest
+from selenium import webdriver
+
+@pytest.fixture
+def driver():
+    # Setup: initialize the WebDriver
+    driver_instance = webdriver.Chrome()
+    yield driver_instance
+    # Teardown: close the WebDriver
+    driver_instance.quit()
+</code></pre>
+        <h4>Refactor the test to use the fixture:</h4>
+        <p>Now, update <code>test_demo.py</code> to use the `driver` fixture.</p>
+        <pre><code># test_demo.py
+def test_verify_demoqa_title(driver):
+    driver.get("https://demoqa.com")
+    assert "DEMOQA" in driver.title
+</code></pre>
+    </div>
+
+    <div class="slide">
+        <h2>Submit your changes</h2>
+        <p>Now you created your firt test script and update conftest.py, update your repository with latest changes</p>
+        <p>
+            <ol>
+                <li>In the terminal, navigate to your automation project, for istance, /Users/rodrigoprado/rgp/ProgramaEstagio/projeto-automacao</li>
+                <li>Check the changes: git status</li>
+                <li>Create a new branch: git checkout -b <-name_for_your_branch-></li>
+                <li>Add your files: git add test_demo. py</li>
+                <li>Create a commit with a message: git commit -m "my first script"</li>
+                <li>Submit the changes: git push origin <-name_for_your_branch-></li>
+                <li>Verify the push generates a link to merge your code</li>
+            </ol>
+        </p>
+        <p>Access your repository to merge the new code:
+ https://github.com/rgpcesar/estagio-cesar/pull/new/adding_test_case</p>
+    </div>
+
+    <div class="slide">
+        <h2>Conclusion</h2>
+        <p>This presentation covered the foundational steps for setting up a web test automation project using Python, Selenium, and Pytest. These practices will ensure your projects are scalable, maintainable, and easy to manage.</p>
+        <p>Happy Testing!</p>
+    </div>
+
+</body>
+</html>

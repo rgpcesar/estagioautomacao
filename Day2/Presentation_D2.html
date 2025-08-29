@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Test Automation - Day 2</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            line-height: 1.6;
+            color: #333;
+        }
+        h1, h2, h3 {
+            color: #0056b3;
+        }
+        pre {
+            background-color: #f4f4f4;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+        code {
+            font-family: "Courier New", Courier, monospace;
+            color: #d44950;
+        }
+        .slide {
+            margin-bottom: 40px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <h1>Web Test Automation - Day 2</h1>
+    <h3>Locating Elements & Advanced Interactions</h3>
+
+     <div class="slide">
+        <h2>Agenda</h2>
+        <ul>
+            <li>Strategies for Locating Web Elements</li>
+            <li>Filling In Forms and Validating Output</li>
+            <li>Basic Interactions: send_keys, click and clear</li>
+            <li>Advanced Actions with ActionChains</li>
+            <li>Capturing Evidence with Screenshots</li>
+        </ul>
+    </div>
+
+    <div class="slide">
+        <h2>Locating Web Elements with Selenium</h2>
+        <p>To interact with elements on a web page, you first need to find them. Selenium provides several strategies, or "locators," to do this. The most common are ID, CSS Selector, and XPath.</p>
+    </div>
+
+    <div class="slide">
+        <h2>1. By ID</h2>
+        <p>This is the most reliable and fastest way to locate an element, as IDs are supposed to be unique on a page. If an element has an ID, it's usually the best locator to use.</p>
+        <h4>Example HTML:</h4>
+        <pre><code><input type="text" id="userName"></code></pre>
+        <h4>Selenium Code:</h4>
+        <pre><code>from selenium.webdriver.common.by import By
+
+element = driver.find_element(By.ID, "userName")</code></pre>
+    </div>
+
+    <div class="slide">
+        <h2>2. By CSS Selector</h2>
+        <p>CSS Selectors are very powerful and flexible. They use the same syntax as CSS to select elements. You can select by tag, class, ID, attributes, and their combinations.</p>
+        <h4>Example HTML:</h4>
+        <pre><code><div class="main-content">
+    <input type="email" id="userEmail">
+</div></code></pre>
+        <h4>Selenium Code Examples:</h4>
+        <pre><code>from selenium.webdriver.common.by import By
+
+# By ID
+element_by_id = driver.find_element(By.CSS_SELECTOR, "#userEmail")
+
+# By class
+element_by_class = driver.find_element(By.CSS_SELECTOR, ".main-content")
+
+# By tag and attribute
+element_by_attr = driver.find_element(By.CSS_SELECTOR, "input[type='email']")</code></pre>
+    </div>
+
+    <div class="slide">
+        <h2>3. By XPath</h2>
+        <p>XPath (XML Path Language) is the most powerful locator, allowing you to navigate the structure of an HTML document. It can find any element, even if it doesn't have a unique ID or class. However, it can be slower and more complex than CSS Selectors.</p>
+        <h4>Example HTML:</h4>
+        <pre><code><div>
+    <button>Click Me</button>
+</div></code></pre>
+        <h4>Selenium Code Examples:</h4>
+        <pre><code>from selenium.webdriver.common.by import By
+
+# Absolute XPath (fragile, not recommended)
+element_abs = driver.find_element(By.XPATH, "/html/body/div[2]/div/div/div/button")
+
+# Relative XPath (more robust)
+element_rel = driver.find_element(By.XPATH, "//button[text()='Click Me']")</code></pre>
+    </div>
+
+    <div class="slide">
+        <h2>Project Structure</h2>
+        <p>To keep our tests organized, we have structured them into the following files:</p>
+        <ul>
+            <li><strong>test_elements.py:</strong> Contains tests demonstrating different locator strategies (ID, CSS Selector, XPath).</li>
+            <li><strong>test_check_box.py:</strong> Contains tests for interacting with checkboxes and radio buttons.</li>
+            <li><strong>test_buttons.py:</strong> Contains tests for advanced button interactions like double-click and right-click.</li>
+            <li><strong>test_text_box.py:</strong> Contains the test for filling out and submitting the text box form.</li>
+        </ul>
+    </div>
+
+    <div class="slide">
+    <p><strong>Task:</strong> Let's create a new test file, Day2/test_elements.py, and locate the “Text Box” button on the “Elements” page in three different ways.</p>
+<p>Actions:</p>
+<ol>
+    <li>Create a new file, Day2/test_elements.py </li>
+    <li>Access the page https://demoqa.com/elements</li>
+    <li>Check object and select some options to create a locator</li>
+    <li>Create a test to navigate to the page</li>
+    <li>Create a test to localize object by ID</li>
+    <li>Create a test to localize object by CSS_SELECTOR</li>
+    <li>Create a test to localize object by XPATH</li>
+</ol>
+        <h2>Code: test_elements.py</h2>
+        <pre><code>from selenium.webdriver.common.by import By
+import time
+
+def test_navigate_to_elements_page(driver):
+    """Navega para a página de elementos."""
+    driver.get("https://demoqa.com/elements")
+    assert "elements" in driver.current_url
+
+def test_locate_by_id(driver):
+    driver.get("https://demoqa.com/elements")
+    element = driver.find_element(By.ID, "item-0")
+    time.sleep(1)
+    assert element.is_displayed()
+    assert element.text == "Text Box"
+
+def test_locate_by_css_selector(driver):
+    driver.get("https://demoqa.com/elements")
+    element = driver.find_element(By.CSS_SELECTOR, "#item-0")
+    time.sleep(1)
+    assert element.is_displayed()
+
+def test_locate_by_xpath(driver):
+    driver.get("https://demoqa.com/elements")
+    # A more specific XPath to avoid ambiguity
+    element = driver.find_element(By.XPATH, "//span[text()='Text Box']")
+    time.sleep(1)
+    assert element.is_displayed()</code></pre>
+    </div>
+
+    <div class="slide">
+        <p><strong>Task:</strong>  Let's expand the 'Check Box' tree and select some options</p>
+<p>Actions:</p>
+<ol>
+    <li>Create a new file, Day2/test_check_box.py </li>
+    <li>Access the page https://demoqa.com/checkbox</li>
+    <li>Click on the button to expand the entire tree ('+')</li>
+    <li>Select the "Notes" checkbox</li>
+    <li>Validate that Notex checkbox has been ticked</li>
+</ol>
+        <h2>Code: test_check_box.py</h2>
+        <pre><code>from selenium.webdriver.common.by import By
+import time
+
+def test_check_box(driver):
+    driver.get("https://demoqa.com/checkbox")
+    
+    # Expand the tree
+    expand_all_button = driver.find_element(By.CSS_SELECTOR, "button[title='Expand all']")
+    expand_all_button.click()
+    
+    # Select the checkbox "Notes"
+    notes_checkbox = driver.find_element(By.XPATH, "//label[@for='tree-node-notes']")
+    notes_checkbox.click()
+    
+    # Validate if checkbox was ticked
+    notes_input = driver.find_element(By.ID, "tree-node-notes")
+    assert notes_input.is_selected()</code></pre>
+    </div>
+
+    <div class="slide">
+<p><strong>Task:</strong> Let's expand the 'Radio Button' tree and select some options</p>
+<p>Actions:</p>
+<ol>
+    <li>Create a new file, Day2/test_radio_button.py</li>
+    <li>Access the page https://demoqa.com/radio-button</li>
+    <li>Click on radion button 'impressive'</li>
+    <li>Validate the page will display a message: You have selected Impressive</li>
+</ol>
+
+
+        <h2>Code: test_radio_button.py</h2>
+        <pre><code>from selenium.webdriver.common.by import By
+
+def test_interact_with_radio_button(driver):
+
+    driver.get("https://demoqa.com/radio-button")
+    
+    # Radio buttons may be disabled or hidden, which requires a click via JavaScript
+    # or, as in this case, clicking on the associated label, which is the recommended practice.
+    impressive_radio_label = driver.find_element(By.XPATH, "//label[@for='impressiveRadio']")
+    impressive_radio_label.click()
+    
+    # Validate message
+    success_message = driver.find_element(By.CSS_SELECTOR, ".mt-3")
+    assert "Impressive" in success_message.text</code></pre>
+    </div>
+
+            <div class="slide">
+            <p><strong>Task:</strong> Let's try to fill the form present on text box menu</p>
+<p>Actions:</p>
+<ol>
+    <li>Create a new file, Day2/test_text_box.py</li>
+    <li>Access the page https://demoqa.com/text-box</li>
+    <li>Map the four elements: Full name, Email, Current Address and Permanent Address</li>
+    <li>Create the test data to fill the text input fields</li>
+    <li>Press submit button</li>
+    <li>Validate the page will display a output box with all information from form</li>
+</ol>
+        <h2>Code: test_text_box.py</h2>
+        <pre><code>from selenium.webdriver.common.by import By
+import time
+
+def test_fill_text_box_form_and_validate(driver):
+    driver.get("https://demoqa.com/text-box")
+
+    # Fill out the form
+    full_name_input = driver.find_element(By.ID, "userName")
+    email_input = driver.find_element(By.ID, "userEmail")
+    current_address_input = driver.find_element(By.ID, "currentAddress")
+    permanent_address_input = driver.find_element(By.ID, "permanentAddress")
+    submit_button = driver.find_element(By.ID, "submit")
+
+    # Test data for the form
+    full_name = "Rodrigo"
+    email = "rgpe@cesar.org.br"
+    current_address = "Rua Barão de Souza Leão, s/n"
+    permanent_address = "Avenida Boa Viagem, s/n"
+
+    # Fill the form
+    full_name_input.send_keys(full_name)
+    email_input.send_keys(email)
+    current_address_input.send_keys(current_address)
+    permanent_address_input.send_keys(permanent_address)
+    time.sleep(2)
+    permanent_address_input.clear()
+    time.sleep(3)
+    permanent_address = "Avenida Conselheiro Aguiar, s/n"
+    permanent_address_input.send_keys(permanent_address)
+
+    # Click on submit button
+    # driver.execute_script("arguments[0].scrollIntoView(true);", submit_button)
+    submit_button.click()
+
+    time.sleep(5)
+    
+    # Map output elements
+    output_name = driver.find_element(By.ID, "name")
+    output_email = driver.find_element(By.ID, "email")
+    output_current_address = driver.find_element(By.CSS_SELECTOR, "p#currentAddress")
+    output_permanent_address = driver.find_element(By.CSS_SELECTOR, "p#permanentAddress")
+
+    # Check output
+    assert full_name in output_name.text
+    assert email in output_email.text
+    assert current_address in output_current_address.text
+    assert permanent_address in output_permanent_address.text</code></pre>
+    </div>
+
+     <div class="slide">
+        <h2>Core Concepts</h2>
+    <strong> ActionChains</strong> in Selenium provide a way to automate complex user interactions that involve a sequence of low-level actions, such as mouse movements, mouse button actions (clicks, double-clicks, context clicks), and keyboard interactions (key presses and releases). These are particularly useful for scenarios that cannot be achieved with simple, direct WebDriver commands. 
+    
+     <p><strong> Key features and uses of ActionChains:</strong></p>
+
+    <strong>Simulating advanced user gestures:</strong>
+    ActionChains allow for the automation of actions like hovering over elements to reveal hidden menus, performing drag-and-drop operations, and executing click-and-hold actions.
+    <p><strong>Chaining multiple actions:</strong>
+    You can build a sequence of actions by calling various methods on an ActionChains object. These actions are queued and then executed in the specified order when the perform() method is called.</p>
+    <p><strong>Handling dynamic elements:</strong>
+    ActionChains are effective for interacting with elements that exhibit dynamic behavior, such as dropdown menus that appear on hover, sliders, and elements involved in drag-and-drop functionality.</p>
+    <p><strong>Enhanced test reliability:</strong>
+    For complex UI interactions, ActionChains can provide more reliable automation compared to simple commands, especially in cases involving asynchronous or hover-triggered UI elements.</p>
+     <p><strong>Keyboard interactions:</strong>
+    Beyond mouse actions, ActionChains can also simulate keyboard events, including pressing and releasing specific keys, using modifier keys (Shift, Ctrl, Alt), and sending text input.</p>
+    </div>
+
+    <div class="slide">
+<p><strong>Task:</strong> Let's practice how to interact with buttons on page</p>
+<p>Actions:</p>
+<ol>
+    <li>Create a new file, Day2/test_buttons.py</li>
+    <li>Access the page https://demoqa.com/buttons</li>
+    <li>Map the Double click me button</li>
+    <li>Performe the double-click action</li>
+    <li>Validate the page display: You have done a double click</li>
+    <li>Map the Right click me button</li>
+    <li>Performe the right-click action</li>
+    <li>Validate the page display: You have done a right click</li>
+    <li>Map the click me button</li>
+    <li>Performe the simple click action</li>
+    <li>Validate the page display: You have done a dynamic click</li>
+</ol>
+
+
+        <h2>Code: test_buttons.py</h2>
+        <pre><code>from selenium.webdriver.common.by import By
+from selenium.webdriver.common.action_chains import ActionChains
+import time
+
+def test_double_click_button(driver):
+    driver.get("https://demoqa.com/buttons")
+    actions = ActionChains(driver)
+
+    # 1. Double Click
+    double_click_btn = driver.find_element(By.ID, "doubleClickBtn")
+    actions.double_click(double_click_btn).perform()
+    double_click_message = driver.find_element(By.ID, "doubleClickMessage")
+    assert "You have done a double click" in double_click_message.text
+
+def test_right_click_button(driver):
+    driver.get("https://demoqa.com/buttons")
+    actions = ActionChains(driver)
+
+    # 2. Right Click
+    right_click_btn = driver.find_element(By.ID, "rightClickBtn")
+    actions.context_click(right_click_btn).perform()
+    right_click_message = driver.find_element(By.ID, "rightClickMessage")
+    assert "You have done a right click" in right_click_message.text
+
+def test_dynamic_click_button(driver):
+    driver.get("https://demoqa.com/buttons")
+    actions = ActionChains(driver)
+    
+     # 3. Dynamic Click (Simple)
+    # This button has a dynamic ID, so we use a more robust locator
+    dynamic_click_btn = driver.find_element(By.XPATH, "//button[text()='Click Me']")
+    dynamic_click_btn.click()
+    dynamic_click_message = driver.find_element(By.ID, "dynamicClickMessage")
+    assert "You have done a dynamic click" in dynamic_click_message.text
+    time.sleep(3)</code></pre>
+    </div>
+    <div class="slide">
+    <p><strong>Task:</strong> Let's create a script to acess demoQA page and take a Screenshot</p>
+<p>Actions:</p>
+<ol>
+    <li>Create a new file, Day2/test_screenshot.py </li>
+    <li>Access the page https://demoqa.com/buttons</li>
+    <li>Map the Double click me button</li>
+    <li>Performe the double-click action</li>
+    <li>take a Screenshot of the page</li>
+    <li>Validate the page display: You have done a double click</li>
+</ol>
+        <h2>Code: test_screenshot.py</h2>
+        <pre><code>import os
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.action_chains import ActionChains
+
+def test_button_clicks_with_screenshots(driver):
+    if not os.path.exists("screenshots"):
+        os.makedirs("screenshots")
+
+    driver.get("https://demoqa.com/buttons")
+    actions = ActionChains(driver)
+
+    double_click_btn = driver.find_element(By.ID, "doubleClickBtn")
+    actions.double_click(double_click_btn).perform()
+    driver.save_screenshot("screenshots/1_after_double_click.png")
+    double_click_message = driver.find_element(By.ID, "doubleClickMessage")
+    assert "You have done a double click" in double_click_message.text</code></pre>
+    </div>
+
+    <div class="slide">
+        <h2>Conclusion</h2>
+        <p>Choosing the right locator is key to creating stable and reliable automation scripts. Prioritize ID, then CSS Selector, and use XPath when no other option works. Now, let's apply these concepts in our tests.</p>
+        <p>Happy Testing!</p>
+    </div>
+
+</body>
+</html>

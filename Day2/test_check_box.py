@@ -1,5 +1,4 @@
 from selenium.webdriver.common.by import By
-import time
 
 def test_check_box(driver):
     driver.get("https://demoqa.com/checkbox")

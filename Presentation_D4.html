@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Test Automation - Day 4</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; line-height: 1.6; color: #333; }
+        h1, h2, h3 { color: #0056b3; }
+        pre { background-color: #f4f4f4; padding: 10px; border-radius: 5px; overflow-x: auto; }
+        code { font-family: "Courier New", Courier, monospace; color: #d44950; }
+        .slide { margin-bottom: 40px; padding: 20px; border: 1px solid #ddd; border-radius: 8px; background-color: #fff; }
+    </style>
+</head>
+<body>
+    <h1>Web Test Automation - Day 4</h1>
+    <h3>Data-Driven Testing & Advanced Fixtures</h3>
+
+    <div class="slide">
+        <h2>Agenda</h2>
+        <ul>
+            <li>Documenting a Manual Test Scenario</li>
+            <li>Data-Driven Testing: Separating Data from Tests with JSON</li>
+            <li>Implementing a Page Object for the Tool Tips Page</li>
+            <li>Advanced Fixtures: Loading Data and Measuring Test Time</li>
+            <li>Executing Parameterized Tests Across Different Browsers</li>
+        </ul>
+    </div>
+
+    <div class="slide">
+        <h2>1. Manual Test Scenario: Tool Tips</h2>
+        <p><strong>Page:</strong> <a href="https://demoqa.com/tool-tips" target="_blank">Widgets -> Tool Tips</a></p>
+        <ol>
+            <li>Navigate to the "Tool Tips" page.</li>
+            <li>Pass the mouse (hover) over the button "Hover me to see".</li>
+            <li>Verify that the tooltip appears and contains the text: "You hovered over the Button".</li>
+            <li>Pass the mouse over the text field "Hover me to see".</li>
+            <li>Verify that the tooltip for the text field appears and contains the text: "You hovered over the text field".</li>
+        </ol>
+    </div>
+
+    <div class="slide">
+        <h2>2. Data-Driven Testing with `test_data.json`</h2>
+        <p>We separate our test data (URLs, expected text) from our test scripts. This makes our framework much easier to maintain. If data changes, we only need to update one file.</p>
+        <h3>`config/test_data.json`</h3>
+        <pre><code>{
+  "tool_tips_url": "https://demoqa.com/tool-tips",
+  "tool_tip_button_text": "You hovered over the Button",
+  "tool_tip_field_text": "You hovered over the text field"
+}</code></pre>
+    </div>
+
+    <div class="slide">
+        <h2>3. Page Object: `tool_tips_page.py`</h2>
+        <p>We create a Page Object to encapsulate all interactions with the Tool Tips page.</p>
+        <pre><code>from selenium.webdriver.common.by import By
+from selenium.webdriver.common.action_chains import ActionChains
+from .base_page import BasePage
+
+class ToolTipsPage(BasePage):
+    TOOL_TIP_BUTTON = (By.ID, "toolTipButton")
+    TOOL_TIP_FIELD = (By.ID, "toolTipTextField")
+    TOOL_TIP_TEXT = (By.CLASS_NAME, "tooltip-inner")
+
+    def hover_over_button(self):
+        button = self.find_element(*self.TOOL_TIP_BUTTON)
+        ActionChains(self.driver).move_to_element(button).perform()
+
+    def hover_over_field(self):
+        field = self.find_element(*self.TOOL_TIP_FIELD)
+        ActionChains(self.driver).move_to_element(field).perform()
+
+    def get_tooltip_text(self):
+        return self.find_element(*self.TOOL_TIP_TEXT).text</code></pre>
+    </div>
+
+    <div class="slide">
+        <h2>4. Advanced `conftest.py`</h2>
+        <p>Our `conftest.py` is updated to load the JSON data and to time our tests.</p>
+        <pre><code>import pytest
+import json
+import time
+
+# Fixture to load test data from JSON
+@pytest.fixture(scope="session")
+def test_data():
+    with open("config/test_data.json") as f:
+        return json.load(f)
+
+# Hooks to record and print test duration
+@pytest.hookimpl(tryfirst=True)
+def pytest_runtest_logstart(nodeid, location):
+    pytest.start_time = time.time()
+
+@pytest.hookimpl(trylast=True)
+def pytest_runtest_logfinish(nodeid, location):
+    duration = time.time() - pytest.start_time
+    print(f"\nTest '{nodeid}' finished in {duration:.2f} seconds.")
+</code></pre>
+    </div>
+
+    <div class="slide">
+        <h2>5. The Test Script: `test_tool_tips.py`</h2>
+        <p>The final test is clean, readable, and data-driven. It uses the Page Object and the `test_data` fixture.</p>
+        <pre><code>import pytest
+from pages.tool_tips_page import ToolTipsPage
+
+@pytest.mark.usefixtures("driver", "test_data")
+class TestToolTips:
+    def test_button_tooltip(self, test_data):
+        tool_tips_page = ToolTipsPage(self.driver)
+        tool_tips_page.visit(test_data["tool_tips_url"])
+        
+        tool_tips_page.hover_over_button()
+        
+        tooltip_text = tool_tips_page.get_tooltip_text()
+        assert tooltip_text == test_data["tool_tip_button_text"]
+
+    def test_field_tooltip(self, test_data):
+        tool_tips_page = ToolTipsPage(self.driver)
+        tool_tips_page.visit(test_data["tool_tips_url"])
+        
+        tool_tips_page.hover_over_field()
+        
+        tooltip_text = tool_tips_page.get_tooltip_text()
+        assert tooltip_text == test_data["tool_tip_field_text"]</code></pre>
+    </div>
+
+    <div class="slide">
+        <h2>Conclusion</h2>
+        <p>Today we've elevated our framework by separating data from tests, implementing a new Page Object, and adding test metrics. These are key skills for building professional, scalable, and maintainable test automation.</p>
+        <p>Happy Testing!</p>
+    </div>
+
+</body>
+</html>

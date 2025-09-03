@@ -10,16 +10,33 @@
         pre { background-color: #f4f4f4; padding: 10px; border-radius: 5px; overflow-x: auto; }
         code { font-family: "Courier New", Courier, monospace; color: #d44950; }
         .slide { margin-bottom: 40px; padding: 20px; border: 1px solid #ddd; border-radius: 8px; background-color: #fff; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #f4f4f4;
+            color: #0056b3;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
     </style>
 </head>
 <body>
     <h1>Web Test Automation - Day 3</h1>
-    <h3>Advanced Concepts: Waits, Page Objects, and Configuration</h3>
+    <h3>Advanced Concepts: Page Objects, Waits, and Configuration</h3>
 
     <div class="slide">
         <h2>Agenda</h2>
         <ul>
-            <li>Replacing `time.sleep` with Explicit Waits (`WebDriverWait`)</li>
+            <li>War against `time.sleep` with Explicit Waits (`WebDriverWait`)</li>
             <li>Introduction to the Page Object Model (POM)</li>
             <li>Refactoring Tests to use Page Objects</li>
             <li>Advanced Project Structure (`pages/`, `tests/`, `utils/`)</li>
@@ -27,116 +44,201 @@
             <li>Advanced `conftest.py`: Supporting Multiple Browsers</li>
         </ul>
     </div>
-
-    <div class="slide">
+        <div class="slide">
         <h2>1. Explicit Waits vs. `time.sleep`</h2>
-        <p>Using `time.sleep()` is a bad practice because it introduces fixed delays, making tests slow and unreliable. A better approach is to use `WebDriverWait` to poll the DOM for a certain amount of time until a condition is met.</p>
-        <h3>Example: Refactored `test_buttons.py`</h3>
-        <pre><code>from selenium.webdriver.common.by import By
-from selenium.webdriver.common.action_chains import ActionChains
+        <p>In automation, the biggest enemy of stability is time. Pages and elements load at different speeds. Using time.sleep(5) to wait for something is bad practice, because:
+<ul>
+    <li>If the element loads in 1 second, your test has waited 4 seconds unnecessarily.</li>
+    <li>If the element takes 6 seconds to load, your test will fail.</li>
+</ul>
+The professional solution is to use Explicit Waits with WebDriverWait. It instructs Selenium to wait until a specific condition is met (or a maximum time is reached).
+</p>
+<p>
+    Imangine the page demonQA -> Elements -> Dynamic Properties. There is button that only appears after 5 seconds.
+</p>
+        <h3>Example: Refactored `test_dinamic_prpoperty.py`</h3>
+        <p>Actions:</p>
+<ol>
+    <li>Create a new file, Day2/test_elements.py </li>
+    <li>Access the page https://demoqa.com/elements</li>
+    <li>Click on Dynamic Properties menu</li>
+    <li>Check the 'Visible After 5 Seconds' button appears</li>
+    <li>Click in the button</li>
+</ol>
+        <pre><code>import time
+from selenium.webdriver.common.by import By
+
+def test_dinamic_button(driver):
+
+    driver.get("https://demoqa.com/elements")
+
+    dynamic_property = driver.find_element(By.ID, "item-8")
+    
+    driver.execute_script("arguments[0].scrollIntoView(true);", dynamic_property)
+
+    assert dynamic_property.is_displayed()
+    dynamic_property.click()
+    
+    time.sleep(6)
+
+    visible_After_button = driver.find_element(By.ID, "visibleAfter")
+    visible_After_button.click()
+</code></pre>
+<p>
+    Let's change the time.sleep to use a wait from WebDriverWait
+</p>
+        <pre><code>import time
+from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
-def test_double_click_button(driver):
-    driver.get("https://demoqa.com/buttons")
-    wait = WebDriverWait(driver, 10)
-    actions = ActionChains(driver)
+def test_dinamic_button(driver):
 
-    double_click_btn = wait.until(EC.element_to_be_clickable((By.ID, "doubleClickBtn")))
-    actions.double_click(double_click_btn).perform()
-    double_click_message = wait.until(EC.visibility_of_element_located((By.ID, "doubleClickMessage")))
-    assert "You have done a double click" in double_click_message.text
+    driver.get("https://demoqa.com/elements")
+
+    dynamic_property = driver.find_element(By.ID, "item-8")
+    
+    driver.execute_script("arguments[0].scrollIntoView(true);", dynamic_property)
+
+    assert dynamic_property.is_displayed()
+    dynamic_property.click()
+    
+    wait = WebDriverWait(driver, 10)
+
+    visible_After_button = wait.until(
+        EC.element_to_be_clickable((By.ID, "visibleAfter"))
+    )
+    visible_After_button.click()
+    
 </code></pre>
+<h3><p>There a few situations that is generally necessary to simulate real delays that occur in real-world applicationsl.</p></h3>
+<p><strong>Simulate network conditions:</strong> When testing interactions with external services or APIs, you may need a time.sleep() to simulate latency or to avoid overloading the server with excessive requests. </p>
+<p><strong>Testing application behavior:</strong> In applications with user interfaces (GUIs) or command line interfaces (CLIs), you may need to wait for specific events or to observe the interface at work. </p>
+<p><strong>Simulate file loading: </strong> When testing the process of loading documents or other files, time.sleep() can be used to simulate the time the system waits to complete the operation. </p>
+<p><strong>Checking data persistence:</strong> To check that a new piece of data has been stored correctly in a database, you can use time.sleep() to wait for the record to appear before continuing the test.</p>
+
+
     </div>
 
     <div class="slide">
-        <h2>2. The Page Object Model (POM)</h2>
+        <h2>2. Problems of automation without good standards:</h2>
+        <ul>
+            <li><strong>Difficult maintenance:</strong> Changes to the tested system may require modifying many parts of the test code, making the project a nightmare to maintain. </li>
+            <li><strong>Duplicate code:</strong> Without a clear structure like the POM, tests tend to have repeated blocks of code, making the project less efficient. </li>
+            <li><strong>Test fragility: </strong> Tests written in a disorganized way are more likely to fail when the user interface changes, leading to fragile tests. </li>
+            <li><strong>Poor readability: </strong> Lack of organization makes code harder to understand, especially for new team members, decreasing collaboration. </li>
+            <li><strong>Limited code reuse: </strong> The code is not organized into reusable objects, which prevents parts of the tests from being used in different scenarios. </li>
+            <li><strong>Difficulty in scaling: </strong> Without the abstraction of page elements, tests become less robust and more difficult to scale to cover more functionality.</li>
+        </ul>
+    </div>
+
+    <div class="slide">
+        <h2>The Page Object Model (POM)</h2>
         <p>POM is a design pattern that makes test code more maintainable and readable. We create a class for each page (or a significant component) of the application, encapsulating the elements (locators) and the actions (methods) that can be performed on that page.</p>
         <h3>Benefits:</h3>
         <ul>
-            <li><strong>Readability:</strong> Test scripts become cleaner and focus on the test logic, not the implementation details.</li>
-            <li><strong>Maintainability:</strong> If the UI changes, you only need to update the locators in one place (the page object class).</li>
-            <li><strong>Reusability:</strong> Page objects can be reused across multiple tests.</li>
+            <li><strong>Reduced redundancy:</strong> POM allows you to group page interactions into a separate class, avoiding code duplication.</li>
+            <li><strong>Improved readability and maintainability:</strong> The code is organized, clean and easy to understand, facilitating collaboration and long-term maintenance. </li>
+            <li><strong>More resilient testing:</strong> By abstracting elements from the interface, changes to the page have less impact on the tests, making them more stable.</li>
+            <li><strong>Facilitates scalability:</strong> With logical organization, it's easier to add new tests and expand coverage without creating complexity.</li>
+            <li><strong>Code reuse: </strong> Page objects can be reused in several tests, speeding up development and the creation of new test cases.</li>
         </ul>
     </div>
-    
     <div class="slide">
         <h2>3. Project Structure for POM</h2>
         <p>A well-organized project structure is key for maintainability.</p>
         <pre><code>
-/Day3
+/Project_name
 |-- /pages
-|   |-- base_page.py
 |   |-- text_box_page.py
 |   |-- buttons_page.py
 |-- /tests
-|   |-- test_text_box_pom.py
-|   |-- test_buttons_pom.py
+|   |-- test_text_box.py
+|   |-- test_buttons.py
 |-- conftest.py
 |-- pytest.ini
         </code></pre>
+        <p><strong><code>pytest.ini:</code></strong></p>
+        <p>This is the primary configuration file for pytest, typically located at the root of your project. It allows you to define global settings and default behavior for your test suite</p>
+        <p><strong><code>conftest.py:</code></strong></p>
+        <p>
+        This is a special Python file that acts as a local plugin for pytest. It's used to define fixtures and implement hook functions that are specific to a particular directory and its subdirectories.
+        </p>
+       <table>
+        <thead>
+            <tr>
+                <th>Feature</th>
+                <th>pytest.ini</th>
+                <th>conftest.py</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>Type</strong></td>
+                <td>Configuration file (INI format)</td>
+                <td>Python file (local plugin)</td>
+            </tr>
+            <tr>
+                <td><strong>Purpose</strong></td>
+                <td>Global configuration and default settings</td>
+                <td>Fixture definitions and local hook implementations</td>
+            </tr>
+            <tr>
+                <td><strong>Scope</strong></td>
+                <td>Project-wide</td>
+                <td>Directory-specific and its subdirectories</td>
+            </tr>
+            <tr>
+                <td><strong>Content</strong></td>
+                <td>Configuration options (e.g., addopts)</td>
+                <td>Python code (fixtures, hook functions)</td>
+            </tr>
+        </tbody>
+    </table>
     </div>
 
-    <div class="slide">
-        <h2>4. `base_page.py`</h2>
-        <p>A base page contains common methods that all other page objects can inherit.</p>
-        <pre><code>from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
+    <p>
+        Let's practice and create new script based on <code>'text_elements.py'</code>
+    </p>
 
-class BasePage:
+    <div class="slide">
+        <h2>4. `text_box_page.py` (Page Object)</h2>
+        <pre><code>from selenium.webdriver.common.by import By
+
+class TextBoxPage:
     def __init__(self, driver):
         self.driver = driver
-        self.wait = WebDriverWait(self.driver, 10)
+        self.url = "https://demoqa.com/text-box"
+        # Locators
+        self.FULL_NAME_INPUT = (By.ID, "userName")
+        self.EMAIL_INPUT = (By.ID, "userEmail")
+        self.CURRENT_ADDRESS_INPUT = (By.ID, "currentAddress")
+        self.PERMANENT_ADDRESS_INPUT = (By.ID, "permanentAddress")
+        self.SUBMIT_BUTTON = (By.ID, "submit")
+        self.OUTPUT_DIV = (By.ID, "output")
 
-    def visit(self, url):
-        self.driver.get(url)
-
-    def find_element(self, *locator):
-        return self.wait.until(EC.visibility_of_element_located(locator))
-
-    def click(self, *locator):
-        element = self.wait.until(EC.element_to_be_clickable(locator))
-        element.click()
-
-    def type(self, text, *locator):
-        element = self.find_element(*locator)
-        element.clear()
-        element.send_keys(text)</code></pre>
-    </div>
-
-    <div class="slide">
-        <h2>5. `text_box_page.py` (Page Object)</h2>
-        <pre><code>from selenium.webdriver.common.by import By
-from .base_page import BasePage
-
-class TextBoxPage(BasePage):
-    URL = "https://demoqa.com/text-box"
-
-    # Locators
-    FULL_NAME_INPUT = (By.ID, "userName")
-    # ... other locators ...
-    SUBMIT_BUTTON = (By.ID, "submit")
-    OUTPUT_NAME = (By.ID, "name")
-
-    def load(self):
-        self.visit(self.URL)
+    def navigate(self):
+        self.driver.get(self.url)
 
     def fill_form(self, full_name, email, current_address, permanent_address):
-        self.type(full_name, *self.FULL_NAME_INPUT)
-        # ... other fill actions ...
+        self.driver.find_element(*self.FULL_NAME_INPUT).send_keys(full_name)
+        self.driver.find_element(*self.EMAIL_INPUT).send_keys(email)
+        self.driver.find_element(*self.CURRENT_ADDRESS_INPUT).send_keys(current_address)
+        self.driver.find_element(*self.PERMANENT_ADDRESS_INPUT).send_keys(permanent_address)
 
-    def submit_form(self):
-        submit_button = self.find_element(*self.SUBMIT_BUTTON)
-        self.driver.execute_script("arguments[0].click();", submit_button)
+    def submit(self):
+        submit_button = self.driver.find_element(*self.SUBMIT_BUTTON)
+        # Rola até o botão e clica (boa prática que já aprendemos)
+        self.driver.execute_script("arguments[0].scrollIntoView(true);", submit_button)
+        submit_button.click()
 
     def get_output_text(self):
-        name = self.find_element(*self.OUTPUT_NAME).text
-        # ... get other output text ...
-        return name, ...</code></pre>
+        return self.driver.find_element(*self.OUTPUT_DIV).text
+</code></pre>
     </div>
 
     <div class="slide">
-        <h2>6. `test_text_box_pom.py` (Test using POM)</h2>
+        <h2>6. `test_text_box.py` (Test using POM)</h2>
         <pre><code>from ..pages.text_box_page import TextBoxPage
 
 def test_fill_form_with_pom(driver):
@@ -170,6 +272,16 @@ testpaths = tests
 markers =
     smoke: mark a test as a smoke test.
     regression: mark a test as a regression test.</code></pre>
+
+    <p>Add the new markers in some tests to executing the new parameter</p>
+    <p>Actions:</p>
+<ol>
+    <li>Create <code> pytest.ini</code> file in the root of project</li>
+    <li>Add markers in the new <code> test_elements.py</code> </li>
+    <li>Every time you need to add the <code> import pytest</code> in the test file </li>
+    <li>On top of methods,<code> @pytest.mark.<marcador_criado><-marked-created-></code> </li>
+    <li>Run on terminal, pytest -m <-marked-created-> </li>
+</ol>
     </div>
 
     <div class="slide">

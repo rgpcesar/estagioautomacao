@@ -31,16 +31,33 @@ def driver(request):
     yield driver_instance
     driver_instance.quit()
 
+from pathlib import Path
+
+LOG_FILE = Path("test_durations.log")
+
 @pytest.hookimpl(tryfirst=True)
-def pytest_runtest_logstart(nodeid, location):
-    """Signal the start of a test."""
-    pytest.start_time = time.time()
+def pytest_runtest_setup(item):
+    item.start_time = time.time()
+    item.start_str = time.strftime("%H:%M:%S", time.localtime())
+    msg = f"\n[START] Test '{item.nodeid}' - {item.start_str}"
+    print(msg)
+    
+    with LOG_FILE.open("a", encoding="utf-8") as f:
+        f.write(msg + "\n")
 
 @pytest.hookimpl(trylast=True)
-def pytest_runtest_logfinish(nodeid, location):
-    """Signal the end of a test."""
-    duration = time.time() - pytest.start_time
-    print(f"\nTest '{nodeid}' finished in {duration:.2f} seconds.")
+def pytest_runtest_teardown(item):
+    duration = time.time() - item.start_time
+    msg = f"[END] Test '{item.nodeid}' finished in {duration:.2f} seconds."
+    print(msg)
+
+    # salva em arquivo
+    with LOG_FILE.open("a", encoding="utf-8") as f:
+        f.write(msg + "\n")
+
+# opcional: limpar o log no início da sessão
+def pytest_sessionstart(session):
+    LOG_FILE.write_text("=== Test Durations Log ===\n", encoding="utf-8")
 
 def pytest_runtest_makereport(item, call):
     if call.when == 'call' and call.excinfo is not None:

@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Test Automation - Day 5</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            line-height: 1.6;
+            color: #333;
+        }
+        h1, h2, h3 {
+            color: #0056b3;
+        }
+        pre {
+            background-color: #f4f4f4;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+        code {
+            font-family: "Courier New", Courier, monospace;
+            color: #d44950;
+        }
+        .slide {
+            margin-bottom: 40px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #fff;
+        }
+    </style>
+    <link rel="stylesheet" 
+      href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+</head>
+<body>
+    <h1>Web Test Automation - Day 5</h1>
+    <h3>Advanced Topics: Parameterization, Reporting, and Allure</h3>
+
+    <div class="slide">
+        <h2>Agenda</h2>
+  <ol>
+    <li><strong>Introduction</strong>
+      <ul>
+        <li>Recap of previous sessions.</li>
+        <li>Overview of today's topics.</li>
+      </ul>
+    </li>
+        <li><strong>HTML Reporting</strong>
+      <ul>
+        <li>Integrating <code>pytest-html</code> for test reports.</li>
+        <li>Configuring <code>pytest.ini</code> for HTML reports.</li>
+        <li>Embedding screenshots on test failure.</li>
+      </ul>
+    </li>
+
+    <li><strong>Adding New Scenarios</strong>
+      <ul>
+        <li>Creating a new Page Object for the "Practice Form".</li>
+        <li>Writing a new test for the "Practice Form".</li>
+      </ul>
+    </li>
+
+    <li><strong>Data-Driven Testing</strong>
+      <ul>
+        <li>Introduction to <code>@pytest.mark.parametrize</code>.</li>
+        <li>Creating a JSON file for test data.</li>
+        <li>Running a test with multiple data sets.</li>
+      </ul>
+    </li>
+
+    <li><strong>Advanced Reporting with Allure</strong>
+      <ul>
+        <li>Introduction to Allure reports.</li>
+        <li>Installing and configuring <code>allure-pytest</code>.</li>
+        <li>Adding <code>@allure.step</code> annotations for detailed reports.</li>
+        <li>Generating and serving Allure reports.</li>
+      </ul>
+    </li>
+
+    <li><strong>Custom Dashboard</strong>
+      <ul>
+        <li>Creating a Python script to parse Allure results.</li>
+        <li>Generating a custom HTML dashboard.</li>
+      </ul>
+    </li>
+
+    <li><strong>Q&amp;A and Next Steps</strong></li>
+  </ol>
+    </div>
+    <div class="slide">
+        <h2>1. HTML Reports & Screenshots on Failure</h2>
+        <p><strong> Reports with `pytest-html`</strong></p>
+        <p><strong>Installation:</strong></p>
+        
+
+To use this feature, you need to install the `pytest-html` package:
+
+    <pre><code>#On terminal
+pip install pytest-html</code>  </pre>
+        <p><strong>Usage:</strong>
+        <p> The report is automatically generated as `report.html` in the root directory when you run `pytest`</p>
+        <p>Let's run the all the tests created so far and check the report.html</p>
+        <pre>
+<code># Examples: how to run pytest with --html report parameter
+pytest --html=report.html Day1/test_home_page.py
+
+pytest --html=report.html Day2/
+
+pytest --html=report.html</code></pre><br>
+        <p>Check the <code>rerport.html</code> file created on Project Area:</p>
+        <img src="screenshots/report_html.png" alt="HTML report created" style="max-width:80%; height:auto;">
+        <p>
+            <strong>Update the <code>pytest.ini</code></strong>
+            <p>Add the parameter into the configuration file to always generate the report in HTML</p>
+            <pre><code>[pytest]
+testpaths = tests
+addopts = --html=report.html --self-contained-html</code></pre>
+        </p>
+
+        <p><strong>Screenshots on Failure</strong>
+        <p>The framework is configured to automatically take a screenshot and embed it in the HTML report when a test fails. This is handled by the `pytest_runtest_makereport` hook in the <code>conftest.py</code> file.</p>
+        <p>We've integrated `pytest-html` and configured our `conftest.py` to automatically generate an HTML report with embedded screenshots for any failed tests.</p>
+        <pre><code class="language-python">@pytest.hookimpl(hookwrapper=True)
+def pytest_runtest_makereport(item, call):
+    outcome = yield
+    report = outcome.get_result()
+    extra = getattr(report, "extra", [])
+    if report.when == "call" and report.failed:
+        # Create screenshots directory if it doesn't exist
+        if not os.path.exists("screenshots"):
+            os.makedirs("screenshots")
+        # Take screenshot
+        driver = item.funcargs['driver']
+        screenshot_file = os.path.join("screenshots", f"{item.name}_error.png")
+        driver.save_screenshot(screenshot_file)
+        # Add screenshot to the HTML report
+        if screenshot_file:
+            html = f'&lt;div&gt;&lt;img src="{screenshot_file}" alt="screenshot" style="width:304px;height:228px;" ' \
+           f'onclick="window.open(this.src)" align="right"/&gt;&lt;/div&gt;'
+            extra.append(pytest_html.extras.html(html))
+    report.extra = extra</code></pre>
+    </div>
+    <div class="slide">
+        <h2>2. New Scenario: "Practice Form"</h2>
+        <p>We've expanded our test suite to include a new scenario for filling out the "Practice Form" on DemoQA.</p>
+        
+        <p><strong>Practice Form:</strong> This test fills out the Practice Form with data and submits it.</p>
+        <p><strong>Manual Steps:</strong>
+            <ol>
+                <li>Navigate to `https://demoqa.com/automation-practice-form`</li>
+                <li>Enter the First Name</li>
+                <li>Enter the Last Name</li>
+                <li>Enter the Email</li>
+                <li>Select a Gender</li>
+                <li>Enter the Mobile number</li>
+                <li>Select the Date of Birth</li>
+                <li>Enter Subjects.</li>
+                <li>Select Hobbies</li>
+                <li>Enter the Current Address</li>
+                <li>Select the State</li>
+                <li>Select the City</li>
+                <li>Click the Submit button</li>
+                <li>Verify the confirmation modal appears with the correct information</li>
+
+            </ol>
+        </p>
+        <p>Create a new Page Object named <code>pages/practice_form_page.py</code> to encapsulate the interactions with the form elements.</p>
+        <pre><code class="language-python">from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import Select
+from selenium.webdriver.common.keys import Keys
+
+class PracticeFormPage:
+    def __init__(self, driver):
+        self.driver = driver
+        self.url = "https://demoqa.com/automation-practice-form"
+        self.first_name_input = (By.ID, "firstName")
+        self.last_name_input = (By.ID, "lastName")
+        self.email_input = (By.ID, "userEmail")
+        self.gender_radio = (By.XPATH, "//label[text()='{}']")
+        self.mobile_input = (By.ID, "userNumber")
+        self.dob_input = (By.ID, "dateOfBirthInput")
+        self.subjects_input = (By.ID, "subjectsInput")
+        self.hobbies_checkbox = (By.XPATH, "//label[text()='{}']")
+        self.picture_upload = (By.ID, "uploadPicture")
+        self.address_textarea = (By.ID, "currentAddress")
+        self.state_dropdown = (By.ID, "state")
+        self.city_dropdown = (By.ID, "city")
+        self.submit_button = (By.ID, "submit")
+        self.out_put_modal = (By.ID, "example-modal-sizes-title-lg")
+    
+    def navigate(self):
+        self.driver.get(self.url)
+
+    def fill_form(self, data):
+        self.driver.find_element(*self.first_name_input).send_keys(data["first_name"])
+        self.driver.find_element(*self.last_name_input).send_keys(data["last_name"])
+        self.driver.find_element(*self.email_input).send_keys(data["email"])
+        self.driver.find_element(By.XPATH, f"//label[text()='{data['gender']}']").click()
+        self.driver.find_element(*self.mobile_input).send_keys(data["mobile"])
+        
+        # Date of Birth
+        dob_field = self.driver.find_element(*self.dob_input)
+        dob_field.send_keys(Keys.CONTROL + "a")
+        dob_field.send_keys(data["dob"])
+        dob_field.send_keys(Keys.ENTER)
+
+        # Subjects
+        subjects_field = self.driver.find_element(*self.subjects_input)
+        for subject in data["subjects"]:
+            subjects_field.send_keys(subject)
+            subjects_field.send_keys(Keys.ENTER)
+
+        # Hobbies
+        for hobby in data["hobbies"]:
+            self.driver.find_element(By.XPATH, f"//label[text()='{hobby}']").click()
+
+        # Picture
+        # self.driver.find_element(*self.picture_upload).send_keys(data["picture"])
+
+        self.driver.find_element(*self.address_textarea).send_keys(data["address"])
+        
+        # State and City
+        self.driver.find_element(*self.state_dropdown).click()
+        self.driver.find_element(By.XPATH, f"//*[text()='{data['state']}']").click()
+        
+        self.driver.find_element(*self.city_dropdown).click()
+        self.driver.find_element(By.XPATH, f"//*[text()='{data['city']}']").click()
+
+
+    def submit_form(self):
+        self.driver.find_element(*self.submit_button).click()
+
+    def check_modal_visible(self):
+        return self.driver.find_element(*self.out_put_modal).is_displayed()</code></pre>
+    <p>Create the test file to perform the manual steps: <code>tests/test_practice_form.py</code></p>
+    <pre><code class="language-python">import pytest
+import json
+from pages.practice_form_page import PracticeFormPage
+
+def load_test_data(path):
+    with open(path, 'r') as f:
+        return json.load(f)
+
+@pytest.mark.parametrize("data", load_test_data("data/practice_form_data.json"))
+def test_fill_practice_form(driver, data):
+    form_page = PracticeFormPage(driver)
+    form_page.navigate()
+    form_page.fill_form(data)
+    form_page.submit_form()
+    assert form_page.check_modal_visible()</code></pre>
+    </div>
+
+    <div class="slide">
+        <h2>3. Data-Driven Testing with `@pytest.mark.parametrize`</h2>
+        <p>To run the same test flow with different data, we've implemented data-driven testing using `pytest`'s parameterization feature.</p>
+        <h2><strong>Advantages:</strong></h2>
+  <ul>
+    <li><strong>Data-Driven Testing:</strong> Separates test data from test logic, making it easier to add new test cases without modifying the test code.</li>
+    <li><strong>Reusability:</strong> A single test can be used to validate multiple scenarios.</li>
+    <li><strong>Readability:</strong> Keeps the test code clean and focused on the test flow.</li>
+    <li><strong>Maintainability:</strong> Test data is managed in a separate file 
+      (<a href="data/practice_form_data.json"><code>data/practice_form_data.json</code></a>), making it easy to update.
+    </li>
+  </ul>
+  <pre><code># Create file, data/practice_form_data.json
+[
+  {
+    "first_name": "John",
+    "last_name": "Doe",
+    "email": "john.doe@example.com",
+    "gender": "Male",
+    "mobile": "1234567890",
+    "dob": "15 May 1990",
+    "subjects": ["Maths", "Physics"],
+    "hobbies": ["Sports", "Music"],
+    "picture": "",
+    "address": "123 Main Street",
+    "state": "NCR",
+    "city": "Delhi"
+  },
+  {
+    "first_name": "Jane",
+    "last_name": "Smith",
+    "email": "jane.smith@example.com",
+    "gender": "Female",
+    "mobile": "0987654321",
+    "dob": "20 February 1995",
+    "subjects": ["Chemistry", "Biology"],
+    "hobbies": ["Reading"],
+    "picture": "",
+    "address": "456 Oak Avenue",
+    "state": "NCR",
+    "city": "Gurgaon"
+  }
+]</code></pre>
+    </div>
+
+    <div class="slide">
+        <h2>4. Advanced Reporting with `pytest-allure`</h2>
+        <p>In essence, allure-pytest acts as a bridge, allowing Pytest users to leverage the powerful reporting capabilities of Allure Report for comprehensive test analysis and visualization.</p>
+        <h3>Key functionalities of <strong>allure-pytest</strong>:</h3>
+  <ul>
+    <li>
+      <strong>Test Result Collection:</strong>
+      It automatically collects test results and metadata from Pytest executions, preparing the necessary input data for Allure Report generation.
+    </li>
+    <li>
+      <strong>Interactive Reports:</strong>
+      It enables the creation of detailed, visually rich, and interactive test execution reports using Allure Report, which can be viewed in a web browser. These reports include features like graphs, charts, organized views of test cases, timelines, and the ability to attach screenshots, videos, and other artifacts.
+    </li>
+    <li>
+      <strong>Test Organization and Metadata:</strong>
+      It provides decorators and dynamic functions to add metadata to tests, such as epics, features, stories, parent suites, suites, and sub-suites, allowing for better organization and navigation within the Allure Report.
+    </li>
+    <li>
+      <strong>Enhanced Debugging:</strong>
+      The detailed reports and ability to attach various artifacts help in quickly identifying and resolving issues during the testing process.
+    </li>
+  </ul>
+        <p><h3>Allure Reports</h3> 
+        <p>Install the `allure-pytest` package and Allure command-line tool:</p>
+        <pre><code>pip install allure-pytest
+brew install allure</code></pre>
+        <p><h3>Usage:</h3></p>
+        <p>1.  Run `pytest` with the `--alluredir` flag:</p>
+        <pre><code># Run all tests create and generate report on Allure
+pytest --alluredir=allure-results
+
+# Run a specific test 
+pytest tests/test_practice_form.py --alluredir=allure-results</code></pre>
+        <p>2.  Serve the Allure report:</p>
+        <pre><code>allure serve allure-results</code></pre>
+        </p>
+        <p>3. Check Allure report:
+            <p>Allure creates a folder with all restuls. Allure start a server to display the results, press 'control + c' to stop (on terminal) </p>
+            <img src="screenshots/allure-report.png" alt="HTML report created" style="max-width:80%; height:auto;"></p>
+        <strong>Update the <code>pytest.ini</code></strong>
+            <p>Add the parameter into the configuration file to always generate the report in HTML</p>
+            <pre><code>[pytest]
+testpaths = tests
+addopts = --html=report.html --self-contained-html --alluredir=allure-results</code></pre>
+    </div>
+
+    <div class="slide">
+        <h2>5. Custom Execution Dashboard</h2>
+        <p>A simple Python script, `dashboard.py`, has been created to parse the Allure JSON results and generate a custom HTML dashboard.</p>
+    </div>
+
+    <div class="slide">
+        <h2>Conclusion</h2>
+        <p>Today, we've significantly enhanced our test automation framework and learned how to debug and solve common, real-world test automation challenges. These improvements will help us write more robust, maintainable, and scalable tests.</p>
+        <p>Happy Testing!</p>
+    </div>
+
+</body>
+</html>

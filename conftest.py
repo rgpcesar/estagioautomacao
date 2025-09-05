@@ -3,8 +3,9 @@ from selenium import webdriver
 import os
 import sys
 
+import pytest_html
 # Add the project root to the Python path
-sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
+# sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
 
 import json
 import time
@@ -59,8 +60,12 @@ def pytest_runtest_teardown(item):
 def pytest_sessionstart(session):
     LOG_FILE.write_text("=== Test Durations Log ===\n", encoding="utf-8")
 
+@pytest.hookimpl(hookwrapper=True)
 def pytest_runtest_makereport(item, call):
-    if call.when == 'call' and call.excinfo is not None:
+    outcome = yield
+    report = outcome.get_result()
+    extra = getattr(report, "extra", [])
+    if report.when == "call" and report.failed:
         # Create screenshots directory if it doesn't exist
         if not os.path.exists("screenshots"):
             os.makedirs("screenshots")
@@ -68,3 +73,9 @@ def pytest_runtest_makereport(item, call):
         driver = item.funcargs['driver']
         screenshot_file = os.path.join("screenshots", f"{item.name}_error.png")
         driver.save_screenshot(screenshot_file)
+        # Add screenshot to the HTML report
+        if screenshot_file:
+            html = f'<div><img src="{screenshot_file}" alt="screenshot" style="width:304px;height:228px;" ' \
+                   f'onclick="window.open(this.src)" align="right"/></div>'
+            extra.append(pytest_html.extras.html(html))
+    report.extra = extra

@@ -1,7 +1,1 @@
 === Test Durations Log ===
-
-[START] Test 'tests/test_tool_tips.py::test_button_tooltip' - 02:16:09
-[END] Test 'tests/test_tool_tips.py::test_button_tooltip' finished in 18.67 seconds.
-
-[START] Test 'tests/test_tool_tips.py::test_field_tooltip' - 02:16:28
-[END] Test 'tests/test_tool_tips.py::test_field_tooltip' finished in 5.50 seconds.

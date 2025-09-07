@@ -349,6 +349,76 @@ addopts = --html=report.html --self-contained-html --alluredir=allure-results</c
     <div class="slide">
         <h2>5. Custom Execution Dashboard</h2>
         <p>A simple Python script, `dashboard.py`, has been created to parse the Allure JSON results and generate a custom HTML dashboard.</p>
+        <pre> <code class="language-python">import json
+import os
+from datetime import datetime
+
+def generate_dashboard():
+    allure_results_path = "allure-results"
+    if not os.path.exists(allure_results_path):
+        print("Allure results directory not found. Please run tests with --alluredir=allure-results")
+        return
+
+    results = []
+    for filename in os.listdir(allure_results_path):
+        if filename.endswith("-result.json"):
+            with open(os.path.join(allure_results_path, filename)) as f:
+                results.append(json.load(f))
+
+    html_content = &quot;&quot;&quot;
+    &lt;html&gt;
+    &lt;head&gt;
+        &lt;title&gt;Test Execution Dashboard&lt;/title&gt;
+        &lt;style&gt;
+            body { font-family: sans-serif; }
+            table { border-collapse: collapse; width: 100%; }
+            th, td { border: 1px solid #dddddd; text-align: left; padding: 8px; }
+            th { background-color: #f2f2f2; }
+        &lt;/style&gt;
+    &lt;/head&gt;
+    &lt;body&gt;
+        &lt;h1&gt;Test Execution Dashboard&lt;/h1&gt;
+        &lt;table&gt;
+            &lt;tr&gt;
+                &lt;th&gt;Test Case&lt;/th&gt;
+                &lt;th&gt;Status&lt;/th&gt;
+                &lt;th&gt;Duration (s)&lt;/th&gt;
+                &lt;th&gt;Start Time&lt;/th&gt;
+                &lt;th&gt;Stop Time&lt;/th&gt;
+            &lt;/tr&gt;
+    &quot;&quot;&quot;
+
+    for result in results:
+        start_time = datetime.fromtimestamp(result['start'] / 1000).strftime('%Y-%m-%d %H:%M:%S')
+        stop_time = datetime.fromtimestamp(result['stop'] / 1000).strftime('%Y-%m-%d %H:%M:%S')
+        duration = (result['stop'] - result['start']) / 1000
+        html_content += f&quot;&quot;&quot;
+            &lt;tr&gt;
+                &lt;td&gt;{result['name']}&lt;/td&gt;
+                &lt;td&gt;{result['status']}&lt;/td&gt;
+                &lt;td&gt;{duration:.2f}&lt;/td&gt;
+                &lt;td&gt;{start_time}&lt;/td&gt;
+                &lt;td&gt;{stop_time}&lt;/td&gt;
+            &lt;/tr&gt;
+        &quot;&quot;&quot;
+
+    html_content += &quot;&quot;&quot;
+        &lt;/table&gt;
+    &lt;/body&gt;
+    &lt;/html&gt;
+    &quot;&quot;&quot;
+
+    with open(&quot;dashboard.html&quot;, &quot;w&quot;) as f:
+        f.write(html_content)
+
+    print(&quot;Dashboard generated: dashboard.html&quot;)
+
+if __name__ == &quot;__main__&quot;:
+    generate_dashboard()</code></pre>
+    <p><strong>Output:</strong></p>
+    <p>
+      <img src="screenshots/dashboard_html.png" alt="HTML report created" style="max-width:80%; height:auto;"></p>
+    </p>
     </div>
 
     <div class="slide">

@@ -32,6 +32,10 @@
             background-color: #fff;
         }
     </style>
+    <link rel="stylesheet" 
+      href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
 </head>
 <body>
     <h1>Web Test Automation - Day 2</h1>
@@ -57,7 +61,8 @@
         <h2>1. By ID</h2>
         <p>This is the most reliable and fastest way to locate an element, as IDs are supposed to be unique on a page. If an element has an ID, it's usually the best locator to use.</p>
         <h4>Example HTML:</h4>
-        <pre><code><input type="text" id="userName"></code></pre>
+       <pre><code class="language-python">&lt;input type=&quot;text&quot; id=&quot;userName&quot;&gt;
+</code></pre>
         <h4>Selenium Code:</h4>
         <pre><code>from selenium.webdriver.common.by import By
 
@@ -68,9 +73,10 @@ element = driver.find_element(By.ID, "userName")</code></pre>
         <h2>2. By CSS Selector</h2>
         <p>CSS Selectors are very powerful and flexible. They use the same syntax as CSS to select elements. You can select by tag, class, ID, attributes, and their combinations.</p>
         <h4>Example HTML:</h4>
-        <pre><code><div class="main-content">
-    <input type="email" id="userEmail">
-</div></code></pre>
+        <pre><code class="language-python">&lt;div class=&quot;main-content&quot;&gt;
+    &lt;input type=&quot;email&quot; id=&quot;userEmail&quot;&gt;
+&lt;/div&gt;
+</code></pre>
         <h4>Selenium Code Examples:</h4>
         <pre><code>from selenium.webdriver.common.by import By
 
@@ -88,9 +94,9 @@ element_by_attr = driver.find_element(By.CSS_SELECTOR, "input[type='email']")</c
         <h2>3. By XPath</h2>
         <p>XPath (XML Path Language) is the most powerful locator, allowing you to navigate the structure of an HTML document. It can find any element, even if it doesn't have a unique ID or class. However, it can be slower and more complex than CSS Selectors.</p>
         <h4>Example HTML:</h4>
-        <pre><code><div>
-    <button>Click Me</button>
-</div></code></pre>
+        <pre><code class="language-python">&lt;div&gt;
+    &lt;button&gt;Click Me&lt;/button&gt;
+&lt;/div&gt;</code></pre>
         <h4>Selenium Code Examples:</h4>
         <pre><code>from selenium.webdriver.common.by import By
 

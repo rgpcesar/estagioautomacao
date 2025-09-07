@@ -5,6 +5,8 @@ from selenium.webdriver.support.ui import Select
 from selenium.webdriver.common.keys import Keys
 
 class PracticeFormPage:
+    """Page Object for the DemoQA Practice Form page."""
+
     def __init__(self, driver):
         self.driver = driver
         self.url = "https://demoqa.com/automation-practice-form"

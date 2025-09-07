@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Test Automation - Day 6</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            line-height: 1.6;
+            color: #333;
+        }
+        h1, h2, h3 {
+            color: #0056b3;
+        }
+        pre {
+            background-color: #f4f4f4;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+        code {
+            font-family: "Courier New", Courier, monospace;
+            color: #d44950;
+        }
+        .slide {
+            margin-bottom: 40px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #fff;
+        }
+        .troubleshooting {
+            background-color: #fffbe6;
+            border-color: #ffe58f;
+        }
+    </style>
+    <link rel="stylesheet" 
+      href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+</head>
+<body>
+    <h1>Web Test Automation - Day 6</h1>
+    <h3>Code Quality, Coverage, and Advanced Debugging</h3>
+
+    <div class="slide">
+        <h2>Agenda</h2>
+        <ul>
+            <li>Code Refactoring and Readability</li>
+            <li>The Importance of Docstrings and Comments</li>
+            <li>Measuring Test Coverage with `pytest-cov`</li>
+            <li>Advanced Debugging: Solving Real-World Failures</li>
+        </ul>
+    </div>
+
+    <div class="slide">
+        <h2>1. Code Refactoring and Readability</h2>
+        <p>We've refactored our code to improve maintainability and reduce duplication. A key improvement was centralizing our data loading logic.</p>
+        <p><strong>Problem: Duplicity</strong>
+        <p>Loading file on <strong><code>conftest.py</code></strong></p>
+        <pre><code class="language-python">@pytest.fixture(scope="session")
+def test_data():
+    with open("data/test_data.json") as f:
+        return json.load(f) </code></pre></p>
+        <p>Loading file on <strong><code>test_practive_form.py</code></strong></p>
+        <pre><code class="language-python">import json
+            
+def load_test_data(path):
+with open(path, 'r') as f:
+    return json.load(f)
+
+@pytest.mark.parametrize("data", load_test_data("data/practice_form_data.json"))
+def test_fill_practice_form(driver, data):
+    form_page = PracticeFormPage(driver)
+    form_page.navigate()
+.
+.
+.</code></pre></p>
+        <p>Create a new helper function to load our data in <strong><code>utils/data_loader.py</code></strong>:</p>
+        <pre><code>import json
+
+def load_json_data(path):
+    """Loads data from a JSON file."""
+    with open(path, 'r') as f:
+        return json.load(f)</code></pre>
+        <p>This function is now used by our test files, ensuring a single, reliable source for data loading.</p>
+        <p><strong>Refactoring code:</strong></p>
+        <p><strong>File: <code>conftest.py</code></strong></p>
+        <del><pre><code class="language-python"> @pytest.fixture(scope="session")
+def test_data():
+    with open("data/test_data.json") as f:
+        return json.load(f)</code></pre></del></p>
+
+        <p>Test: <strong><code>test_practive_form.py</code></strong></p>
+        <pre><code class="language-python">from utils.data_loader import load_json_data
+
+@pytest.mark.parametrize("data", load_json_data("data/practice_form_data.json"))
+def test_fill_practice_form(driver, data):
+    form_page = PracticeFormPage(driver)
+    form_page.navigate()
+.
+.
+.</code></pre></p>
+
+        <p>Test: <strong><code>test_tool_tips.py</code></strong></p>
+        <pre><code class="language-python">from utils.data_loader import load_json_data
+
+test_data = load_json_data("data/test_data.json")
+
+@pytest.mark.widgets
+def test_button_tooltip(driver):
+    """Tests the tooltip on the button."""
+    tool_tips_page = ToolTipsPage(driver)
+    tool_tips_page.navigate(test_data["tool_tips_url"])
+.
+.
+.</code></pre></p>
+    </div>
+
+    <div class="slide">
+        <h2>2. The Importance of Docstrings and Comments</h2>
+        <p>Good documentation is essential for a healthy codebase. We've added docstrings to our Page Objects and fixtures to explain their responsibilities.</p>
+        <h3>Python Docstrings</h3>
+  <p>
+    Python docstrings are string literals that serve as built-in documentation for modules, functions,
+    classes, and methods. Unlike regular comments, docstrings are stored as part of the object's metadata
+    and can be accessed programmatically at runtime.
+  </p>
+
+  <h2>Key Characteristics of Python Docstrings:</h2>
+  <ul>
+    <li>
+      <strong>Placement:</strong>
+      They are the first statement within a module, function, class, or method definition.
+    </li>
+    <li>
+      <strong>Syntax:</strong>
+      They are typically enclosed in triple quotes
+      (<code>'''docstring'''</code> or <code>"""docstring"""</code>).
+      This allows them to span multiple lines for more detailed explanations.
+    </li>
+    <li>
+      <strong>Purpose:</strong>
+      <ul>
+        <li><em>Explain "what" the code does:</em> They describe the purpose, functionality, parameters, return values, and any exceptions raised.</li>
+        <li><em>Improve readability and maintainability:</em> They serve as a quick reference for developers using or maintaining the code.</li>
+        <li><em>Enable automated documentation generation:</em> Tools can extract docstrings to create formal documentation, such as API reference manuals.</li>
+      </ul>
+    </li>
+  </ul>
+
+  <div class="highlight">
+    <p><strong>Tip:</strong> Always write clear and concise docstrings, as they become the "face" of your code for other developers (and even your future self!).</p>
+  </div>
+        <h3>Example: `PracticeFormPage` Docstring</h3>
+        <pre><code># pages/practice_form_page.py
+class PracticeFormPage:
+    """Page Object for the DemoQA Practice Form page."""
+    # ...
+        </code></pre>
+        <h3>Example: `driver` Fixture Docstring</h3>
+        <pre><code># conftest.py
+@pytest.fixture
+def driver(request):
+    """Initializes and returns a Selenium WebDriver instance..."""
+    # ...
+        </code></pre>
+     <h3>Activity:</h3>
+     <p>Add docstrings in the <code>conftest.py</code> and all the pages objects</p>
+    </div>
+
+    <div class="slide">
+        <h2>3. Measuring Test Coverage with `pytest-cov`</h2>
+        <p>pytest-cov is a plugin for the pytest testing framework in Python, designed to measure and report code coverage.</p>
+        <p>Link to documentation page: 
+
+<a href="https://pytest-cov.readthedocs.io/en/latest/readme.html">https://pytest-cov.readthedocs.io/en/latest/readme.html</a>
+</p>
+        <h3>Advantages:</h3>
+        <ul>
+            <li>Identifies untested code.</li>
+            <li>Helps improve test quality.</li>
+            <li>Enforces a minimum quality standard.</li>
+        </ul>
+        <h3>Installation:</h3>
+        <p>To use this feature, you need to install the <code>pytest-cov</code> package:</p>
+  <pre><code class="language-python">pip install pytest-cov</code></pre>
+        <h3>Usage:</h3>
+        <pre><code># Generating the report coverage for specific test in HTML
+pytest --cov-report html tests/test_practice_form.py
+
+# Generating the report coverage for all test suite test in HTML
+pytest --cov-report html tests/
+        </code></pre>
+        <p>Execution wil create a new folder htmlcov/ , open index.html to check the results</p>
+        <h3>Configuration (`pytest.ini`):</h3>
+        <p>Updating <code>pytest.ini</code> to add this property automacally in all executions. </p>
+        <pre><code>[pytest]
+testpaths = tests
+addopts = --html=report.html --self-contained-html --alluredir=allure-results --cov=pages --cov-report=html --cov-fail-under=80
+markers =
+    smoke: mark a test as a smoke test.
+    regression: mark a test as a regression test.</code></pre>
+        <p>This configuration tells `pytest-cov` to measure the coverage of the `pages` directory, generate an HTML report, and fail the build if coverage is less than 80%.</p>
+    </div>
+
+    <div class="slide">
+        <h2>Conclusion</h2>
+        <p>By focusing on code quality, documentation, and test coverage, we build a more robust and maintainable test automation framework. Debugging is a natural part of the development process, and understanding how to solve common issues is a key skill for any test automation engineer.</p>
+        <p>Happy Testing!</p>
+    </div>
+
+</body>
+</html>

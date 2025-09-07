@@ -7,19 +7,19 @@ import pytest_html
 # Add the project root to the Python path
 # sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
 
-import json
 import time
-
-@pytest.fixture(scope="session")
-def test_data():
-    with open("data/test_data.json") as f:
-        return json.load(f)
 
 def pytest_addoption(parser):
     parser.addoption("--browser", action="store", default="chrome", help="browser to execute tests (chrome or firefox)")
 
 @pytest.fixture
 def driver(request):
+    """Initializes and returns a Selenium WebDriver instance based on the
+    browser specified via the command line.
+
+    This fixture supports Chrome and Firefox. It maximizes the browser window
+    and ensures the driver is quit properly after the test execution.
+    """
     browser = request.config.getoption("--browser").lower()
     if browser == "chrome":
         driver_instance = webdriver.Chrome()

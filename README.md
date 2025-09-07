@@ -81,3 +81,25 @@ Run the `dashboard.py` script to generate the `dashboard.html` file:
 ```bash
 python dashboard.py
 ```
+
+### Code Coverage with `pytest-cov`
+
+This project uses `pytest-cov` to measure the effectiveness of the tests by analyzing which parts of the source code are executed during the test run.
+
+**Advantages:**
+
+*   **Identify Untested Code:** Pinpoints areas of the application that lack test coverage.
+*   **Improve Test Quality:** Encourages the creation of more comprehensive tests.
+*   **Maintain Standards:** Can be configured to fail the build if coverage drops below a certain threshold, ensuring a consistent level of quality.
+
+**Installation:**
+
+To use this feature, you need to install the `pytest-cov` package:
+
+```bash
+pip install pytest-cov
+```
+
+**Usage:**
+
+The coverage report is automatically generated in an `htmlcov` directory when you run `pytest`. The build will fail if the coverage for the `pages` directory is below 80%.

@@ -10,24 +10,44 @@ import pytest_html
 import time
 
 def pytest_addoption(parser):
-    parser.addoption("--browser", action="store", default="chrome", help="browser to execute tests (chrome or firefox)")
+    parser.addoption("--browser", action="store", default="chrome", help="browser to execute tests (chrome, firefox, or edge)")
+    parser.addoption("--remote", action="store_true", default=True, help="run tests on selenium grid")
 
 @pytest.fixture
 def driver(request):
-    """Initializes and returns a Selenium WebDriver instance based on the
-    browser specified via the command line.
+    """Initializes and returns a Selenium WebDriver instance.
 
-    This fixture supports Chrome and Firefox. It maximizes the browser window
-    and ensures the driver is quit properly after the test execution.
+    Supports both local and remote execution on Selenium Grid.
+    The browser can be specified via the --browser command-line option.
+    Remote execution is enabled with the --remote flag.
     """
+    remote = request.config.getoption("--remote")
     browser = request.config.getoption("--browser").lower()
-    if browser == "chrome":
-        driver_instance = webdriver.Chrome()
-    elif browser == "firefox":
-        driver_instance = webdriver.Firefox()
-    else:
-        raise ValueError(f"Browser '{browser}' is not supported.")
     
+    if remote:
+        if browser == "chrome":
+            options = webdriver.ChromeOptions()
+        elif browser == "firefox":
+            options = webdriver.FirefoxOptions()
+        elif browser == "edge":
+            options = webdriver.EdgeOptions()
+        else:
+            raise ValueError(f"Browser '{browser}' is not supported for remote execution.")
+            
+        driver_instance = webdriver.Remote(
+            command_executor='http://localhost:4444/wd/hub',
+            options=options
+        )
+    else:
+        if browser == "chrome":
+            driver_instance = webdriver.Chrome()
+        elif browser == "firefox":
+            driver_instance = webdriver.Firefox()
+        elif browser == "edge":
+            driver_instance = webdriver.Edge()
+        else:
+            raise ValueError(f"Browser '{browser}' is not supported for local execution.")
+
     driver_instance.maximize_window()
     yield driver_instance
     driver_instance.quit()

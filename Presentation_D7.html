@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Test Automation - Day 7</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            line-height: 1.6;
+            color: #333;
+        }
+        h1, h2, h3 {
+            color: #0056b3;
+        }
+        pre {
+            background-color: #f4f4f4;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+        code {
+            font-family: "Courier New", Courier, monospace;
+            color: #d44950;
+        }
+        .slide {
+            margin-bottom: 40px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #fff;
+        }
+    </style>
+    <link rel="stylesheet" 
+      href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+</head>
+<body>
+    <h1>Web Test Automation - Day 7</h1>
+    <h3>Parallel Execution with Selenium Grid and Docker</h3>
+
+    <div class="slide">
+        <h2>Agenda</h2>
+        <ul>
+            <li>Introduction to Selenium Grid</li>
+            <li>Setting up the Grid with Docker Compose</li>
+            <li>Running Tests on the Grid</li>
+            <li>Parallel Execution with `pytest-xdist`</li>
+            <li>Using Custom Capabilities</li>
+        </ul>
+    </div>
+
+    <div class="slide">
+        <h2>1. Introduction to Selenium Grid</h2>
+        <p>Selenium Grid is a component of the Selenium suite that specializes in running multiple tests across different browsers, operating systems, and machines in parallel. This capability significantly speeds up test execution and expands test coverage.</p>
+        <h3>Core Concepts:</h3>
+        <ul>
+            <li><strong>Hub:</strong> The Hub is the central point in the Selenium Grid that receives test requests and distributes them to the appropriate Nodes. It acts as a manager, keeping track of which nodes are available and what their capabilities are (e.g., which browser, which platform). There is only one Hub in a Grid.</li>
+            <li><strong>Nodes:</strong> Nodes are the machines (physical or virtual) that execute the tests. Each Node is registered with the Hub and advertises its capabilities. A Grid can have multiple Nodes, and each Node can have multiple browser instances. For example, a single Node could run instances of Chrome, Firefox, and Edge.</li>
+        </ul>
+          <h2>Useful:</h2>
+        <ul>
+            <li>Cross-browser testing (testing in several browsers).</li>
+            <li>Parallelism (running several tests simultaneously).</li>
+            <li>Distributed execution (different machines, different OSs).</li>
+        </ul>
+        <h2>📦 Requirements:</h2>
+  <ul>
+    <li><a href="https://docs.docker.com/desktop/setup/install/mac-install/" target="_blank">Docker Desktop (Mac)</a></li>
+    <ul>
+        <li>Select right version for your chipset: Intel chip or Apple silicon</li>
+        <li>Open the docker.dmg (downloaded), drag and drop the app</li>
+        <li><img src="screenshots/docker.png" alt="Docker" style="max-width:30%; height:30%;"></li>
+    </ul>
+    <li>Python 3.8+ (we're using 3.9.6)</li>
+    <li>Install dependencies in your environment:
+      <pre><code>pip install pytest selenium pytest-xdist</code></pre>
+    </li>
+  </ul>
+    </div>
+
+    <div class="slide">
+        <h2>3. Setting up the Grid with Docker Compose</h2>
+        <p>We use Docker Compose to easily define and run our multi-container Selenium Grid application.</p>
+        <h3><code>docker-compose.yml</code></h3>
+        <pre><code>
+version: "3.8"
+services:
+  hub:
+    image: selenium/hub:4.22.0-20240528
+    container_name: selenium-hub
+    ports:
+      - "4442:4442"
+      - "4443:4443"
+      - "4444:4444"
+
+  chrome:
+    image: selenium/node-chrome:4.22.0-20240528
+    depends_on:
+      - hub
+    environment:
+      - SE_EVENT_BUS_HOST=hub
+      - SE_EVENT_BUS_PUBLISH_PORT=4442
+      - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
+
+  firefox:
+    image: selenium/node-firefox:4.22.0-20240528
+    depends_on:
+      - hub
+    environment:
+      - SE_EVENT_BUS_HOST=hub
+      - SE_EVENT_BUS_PUBLISH_PORT=4442
+      - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
+
+  edge:
+    image: selenium/node-edge:4.22.0-20240528
+    depends_on:
+      - hub
+    environment:
+      - SE_EVENT_BUS_HOST=hub
+      - SE_EVENT_BUS_PUBLISH_PORT=4442
+      - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
+        </code></pre>
+        <h3>Running the Grid:</h3>
+        <pre><code>
+# Start the grid in detached mode
+docker-compose up -d
+
+# Check the grid console
+http://localhost:4444
+
+# Stop the grid
+docker-compose down
+        </code></pre>
+    </div>
+
+    <div class="slide">
+        <h2>3. Running Tests on the Grid</h2>
+        <p>We've refactored our `driver` fixture in `conftest.py` to support remote execution.</p>
+        <pre><code>
+# conftest.py
+
+# ... (add --remote option)
+
+@pytest.fixture
+def driver(request):
+    remote = request.config.getoption("--remote")
+    browser = request.config.getoption("--browser").lower()
+    
+    if remote:
+        # ... (options for each browser)
+        driver_instance = webdriver.Remote(
+            command_executor='http://localhost:4444/wd/hub',
+            options=options
+        )
+    else:
+        # ... (local execution logic)
+
+    # ...
+        </code></pre>
+    </div>
+
+   <div class="slide">
+        <h2>4. Parallel Execution with `pytest-xdist`</h2>
+        <p>We use `pytest-xdist` to run our tests in parallel, which significantly reduces execution time.</p>
+        <h3>Installation:</h3>
+        <pre><code>pip install pytest-xdist</code></pre>
+        <h3>Usage:</h3>
+        <pre><code>
+# Run tests in 3 parallel processes on the grid
+pytest --remote -n 3
+        </code></pre>
+    </div>
+
+    <div class="slide">
+        <h2>5. Using Custom Capabilities</h2>
+        <p>We can request specific capabilities from the Grid, such as platform or browser version.</p>
+        <h3><code>tests/test_custom_capabilities.py</code></h3>
+        <pre><code>
+import pytest
+from selenium import webdriver
+
+def test_custom_platform(request):
+    # ...
+    options = webdriver.ChromeOptions()
+    options.platform_name = "linux"
+    # ...
+    driver = webdriver.Remote(
+        command_executor='http://localhost:4444/wd/hub',
+        options=options
+    )
+    # ...
+        </code></pre>
+    </div>
+
+    <div class="slide">
+        <h2>Conclusion</h2>
+        <p>By leveraging Selenium Grid and Docker, we can create a scalable, parallel testing environment that significantly improves the efficiency and scope of our test automation efforts.</p>
+        <p>Happy Testing!</p>
+    </div>
+
+</body>
+</html>

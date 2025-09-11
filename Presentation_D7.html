@@ -31,6 +31,15 @@
             border-radius: 8px;
             background-color: #fff;
         }
+        .tree {
+        background: #fff;
+        padding: 16px;
+        border-radius: 8px;
+        box-shadow: 0 6px 18px rgba(16,24,40,0.06);
+        max-width: 640px;
+        font-family: "Courier New", monospace;
+        white-space: pre;
+        }
     </style>
     <link rel="stylesheet" 
       href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css">
@@ -44,16 +53,43 @@
     <div class="slide">
         <h2>Agenda</h2>
         <ul>
+            <li>Parallel Execution with `pytest-xdist`</li>
             <li>Introduction to Selenium Grid</li>
             <li>Setting up the Grid with Docker Compose</li>
             <li>Running Tests on the Grid</li>
-            <li>Parallel Execution with `pytest-xdist`</li>
             <li>Using Custom Capabilities</li>
         </ul>
     </div>
-
+       <div class="slide">
+        <h2>1. Parallel Execution with `pytest-xdist`</h2>
+        <p><strong>pytest-xdist</strong> is a Pytest plugin that allows you to:</p>
+        <ul>
+        <li><strong>Run tests in parallel</strong> (multiple test processes at the same time).</li>
+        <li><strong>Distribute tests</strong> across multiple CPUs or even different machines.</li>
+        <li><strong>Speed up test suite execution</strong>, especially when there are many long-running tests.</li>
+        </ul>
+        <h3>Installation:</h3>
+        <pre><code class="language-python">pip install pytest-xdist</code></pre>
+        <h3>Usage:</h3>
+        <pre><code class="language-python"># Run tests in 2 parallel processes locally
+pytest -n 2</code></pre>
+        <h3>Structure project example: (<code>teste-tools</code>)</h3>
+          <div class="tree">tests/
+├── test_demoqa.py
+├── test_buttons.py
+├── test_math.py
+└── test_strings.py</div>
+    <h3>Running in parallel</code>:</h3>
+    <pre><code>% pytest -n 2
+===================================================== test session starts =====================================================
+platform darwin -- Python 3.9.6, pytest-8.4.2, pluggy-1.6.0
+rootdir: /Users/rodrigoprado/rgp/ProgramaEstagio/teste-tools
+plugins: xdist-3.8.0
+2 workers [9 items]     
+.........</code></pre>
+    </div>
     <div class="slide">
-        <h2>1. Introduction to Selenium Grid</h2>
+        <h2>2. Introduction to Selenium Grid</h2>
         <p>Selenium Grid is a component of the Selenium suite that specializes in running multiple tests across different browsers, operating systems, and machines in parallel. This capability significantly speeds up test execution and expands test coverage.</p>
         <h3>Core Concepts:</h3>
         <ul>
@@ -83,53 +119,112 @@
 
     <div class="slide">
         <h2>3. Setting up the Grid with Docker Compose</h2>
-        <p>We use Docker Compose to easily define and run our multi-container Selenium Grid application.</p>
+        <p>A docker-compose.yml is a configuration file used by Docker Compose (a tool that orchestrates multiple Docker containers).
+
+        <p>📌 What does it do?</p>
+
+        <p>Instead of having to run a bunch of <strong>'docker run ...'</strong> commands by hand, you describe your entire application in containers in a single .yml file.</p>
+        <p>Then, with a simple command:</p>
+        <pre><code>docker-compose up</code></pre>
+        <h3>What Docker Compose Does?</h3>
+        <ul>
+            <li>Creates all the containers you have defined.</li>
+            <li>Connects them on an internal network.</li>
+            <li>Applies volumes, ports, environment variables, etc.</li>
+            <li>Keeps everything organized.</li>
+        </ul>
+
         <h3><code>docker-compose.yml</code></h3>
-        <pre><code>
-version: "3.8"
-services:
+        <pre><code>services:
   hub:
-    image: selenium/hub:4.22.0-20240528
+    image: selenium/hub:latest
     container_name: selenium-hub
     ports:
       - "4442:4442"
       - "4443:4443"
       - "4444:4444"
+    environment:
+      - SE_HUB_HOST=localhost
 
   chrome:
-    image: selenium/node-chrome:4.22.0-20240528
+    image: selenium/node-chromium:latest
+    container_name: selenium-node-chromium
+    shm_size: 2gb
     depends_on:
       - hub
     environment:
       - SE_EVENT_BUS_HOST=hub
       - SE_EVENT_BUS_PUBLISH_PORT=4442
       - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
-
+      
   firefox:
-    image: selenium/node-firefox:4.22.0-20240528
+    image: selenium/node-firefox:latest
+    container_name: selenium-node-firefox
+    shm_size: 2gb
     depends_on:
       - hub
     environment:
       - SE_EVENT_BUS_HOST=hub
       - SE_EVENT_BUS_PUBLISH_PORT=4442
-      - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
+      - SE_EVENT_BUS_SUBSCRIBE_PORT=4443</code></pre>
+      <h3>Line-by-line explanation</h3>
+        <details>
+            <summary><code>services:</code></summary>
+            <p>The top-level key where you declare every container (service) you want composed together. Each named entry under <code>services</code> becomes a Docker container managed by Compose.</p>
+        </details>
 
-  edge:
-    image: selenium/node-edge:4.22.0-20240528
-    depends_on:
-      - hub
-    environment:
-      - SE_EVENT_BUS_HOST=hub
-      - SE_EVENT_BUS_PUBLISH_PORT=4442
-      - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
-        </code></pre>
+        <details>
+            <summary><code>hub:</code> (the Selenium Hub)</summary>
+            <ul>
+            <li><strong><code>image: selenium/hub:latest</code></strong> — the Docker image used to create the Hub container. The Hub coordinates test sessions and distributes them to registered nodes.</li>
+            <li><strong><code>container_name: selenium-hub</code></strong> — a fixed, human-friendly container name for easier debugging and logs.</li>
+            <li><strong><code>ports:</code></strong> — maps container ports to the host so services/clients can reach them from outside Docker. Example ports:
+                <ul>
+                <li><code>4444</code> — the Hub API / Web UI (commonly exposed as <code>4444:4444</code>).</li>
+                <li><code>4442</code> — event bus publish port (used by nodes).</li>
+                <li><code>4443</code> — event bus subscribe port (used by nodes).</li>
+                </ul>
+            </li>
+            <li><strong><code>environment:</code></strong> — environment variables that configure the Hub. For example, <code>SE_HUB_HOST</code> can tell the Hub what hostname to advertise. <em>Note:</em> when using Compose, you usually don’t need to set it manually — Compose networking resolves service names.</li>
+            </ul>
+        </details>
+
+        <details>
+            <summary><code>chrome:</code> and <code>firefox:</code> (the nodes)</summary>
+            <ul>
+            <li><strong><code>image</code></strong> — node images provide a browser instance and the node runtime that registers to the Hub:
+                <ul>
+                <li><code>selenium/node-chromium</code> (Chromium node — common on ARM platforms)</li>
+                <li><code>selenium/node-firefox</code></li>
+                </ul>
+            </li>
+
+            <li><strong><code>shm_size: 2gb</code></strong> — increases the container's shared memory size (<code>/dev/shm</code>). Browsers (especially Chrome/Chromium) use shared memory; small defaults can cause crashes or rendering problems. Setting to <code>2gb</code> is a common recommendation.</li>
+
+            <li><strong><code>depends_on: - hub</code></strong> — makes Compose start the Hub service before the node. Important: <em>depends_on</em> ensures startup order but does <strong>not</strong> wait for the Hub to be fully ready.</li>
+
+            <li><strong><code>environment</code></strong> — variables the node uses to find and register to the Hub:
+                <ul>
+                <li><code>SE_EVENT_BUS_HOST=hub</code> — tells the node to contact the host named <code>hub</code> (Compose service name) for event bus communication.</li>
+                <li><code>SE_EVENT_BUS_PUBLISH_PORT=4442</code> and <code>SE_EVENT_BUS_SUBSCRIBE_PORT=4443</code> — define ports used by the Grid’s event bus for publish/subscribe messaging between Hub and nodes.</li>
+                </ul>
+            </li>
+            </ul>
+        </details>
+
+        <h3>How the Grid components interact (high level)</h3>
+        <ol>
+            <li>The Hub starts and exposes a Web UI / API and an internal event bus.</li>
+            <li>Each Node starts, reads environment variables to locate the Hub’s event bus, and attempts to connect and register itself.</li>
+            <li>When registration succeeds, the Hub lists the node as available and will forward test sessions (WebDriver requests) to that node.</li>
+        </ol>
         <h3>Running the Grid:</h3>
         <pre><code>
 # Start the grid in detached mode
 docker-compose up -d
 
 # Check the grid console
-http://localhost:4444
+http://localhost:4444/
 
 # Stop the grid
 docker-compose down
@@ -139,60 +234,66 @@ docker-compose down
     <div class="slide">
         <h2>3. Running Tests on the Grid</h2>
         <p>We've refactored our `driver` fixture in `conftest.py` to support remote execution.</p>
-        <pre><code>
-# conftest.py
+        <pre><code># conftest.py
 
-# ... (add --remote option)
+# ... 
 
+def pytest_addoption(parser):
+    parser.addoption("--browser", action="store", default="chrome", help="browser to execute tests (chrome, firefox, or edge)")
+
+def pytest_generate_tests(metafunc):
+    if "browser" in metafunc.fixturenames:
+        browser = metafunc.config.getoption("browser").split(",")
+        metafunc.parametrize("browser", browser)
+        
 @pytest.fixture
-def driver(request):
-    remote = request.config.getoption("--remote")
-    browser = request.config.getoption("--browser").lower()
-    
-    if remote:
-        # ... (options for each browser)
-        driver_instance = webdriver.Remote(
-            command_executor='http://localhost:4444/wd/hub',
-            options=options
-        )
+def driver(browser):
+    if browser == "chrome":
+        options = ChromeOptions()
+    elif browser == "firefox":
+        options = FirefoxOptions()
     else:
-        # ... (local execution logic)
+        raise ValueError(f"Browser not supported: {browser}")
 
-    # ...
-        </code></pre>
+    driver = webdriver.Remote(
+        command_executor="http://localhost:4444/wd/hub",
+        options=options,
+    )
+
+    yield driver
+    driver.quit()
+# ... 
+</code></pre>
+<h3>Executing tests:</h3>
+        <pre><code># On terminal
+pytest -n2 -v --browser chrome,firefox tests/test_tool_tips.py</code></pre>
+<h3>Output</h3>
+    <pre><code>$ pytest -n2 -v --browser chrome,firefox tests/test_tool_tips.py
+================================================================================================================================== test session starts ===================================================================================================================================
+platform darwin -- Python 3.9.6, pytest-8.4.1, pluggy-1.6.0 -- /Users/rodrigoprado/rgp/ProgramaEstagio/estagio-automacao/myproject/bin/python3
+cachedir: .pytest_cache
+metadata: {'Python': '3.9.6', 'Platform': 'macOS-15.1.1-arm64-arm-64bit', 'Packages': {'pytest': '8.4.1', 'pluggy': '1.6.0'}, 'Plugins': {'allure-pytest': '2.15.0', 'html': '4.1.1', 'xdist': '3.8.0', 'metadata': '3.1.1', 'cov': '6.3.0'}}
+rootdir: /Users/rodrigoprado/rgp/ProgramaEstagio/estagio-automacao
+configfile: pytest.ini
+plugins: allure-pytest-2.15.0, html-4.1.1, xdist-3.8.0, metadata-3.1.1, cov-6.3.0
+2 workers [4 items]     
+scheduling tests via LoadScheduling
+
+tests/test_tool_tips.py::test_field_tooltip[chrome] 
+tests/test_tool_tips.py::test_button_tooltip[chrome] 
+[gw0] [ 25%] PASSED tests/test_tool_tips.py::test_button_tooltip[chrome] 
+tests/test_tool_tips.py::test_button_tooltip[firefox] 
+[gw1] [ 50%] PASSED tests/test_tool_tips.py::test_field_tooltip[chrome] 
+tests/test_tool_tips.py::test_field_tooltip[firefox] 
+[gw0] [ 75%] PASSED tests/test_tool_tips.py::test_button_tooltip[firefox] 
+[gw1] [100%] PASSED tests/test_tool_tips.py::test_field_tooltip[firefox] </code></pre>
     </div>
 
-   <div class="slide">
-        <h2>4. Parallel Execution with `pytest-xdist`</h2>
-        <p>We use `pytest-xdist` to run our tests in parallel, which significantly reduces execution time.</p>
-        <h3>Installation:</h3>
-        <pre><code>pip install pytest-xdist</code></pre>
-        <h3>Usage:</h3>
-        <pre><code>
-# Run tests in 3 parallel processes on the grid
-pytest --remote -n 3
-        </code></pre>
-    </div>
+
 
     <div class="slide">
-        <h2>5. Using Custom Capabilities</h2>
-        <p>We can request specific capabilities from the Grid, such as platform or browser version.</p>
-        <h3><code>tests/test_custom_capabilities.py</code></h3>
-        <pre><code>
-import pytest
-from selenium import webdriver
-
-def test_custom_platform(request):
-    # ...
-    options = webdriver.ChromeOptions()
-    options.platform_name = "linux"
-    # ...
-    driver = webdriver.Remote(
-        command_executor='http://localhost:4444/wd/hub',
-        options=options
-    )
-    # ...
-        </code></pre>
+        <h2>Explore the grid</h2>
+        <p>Let's run the full suite tests/ on the grid</p>
     </div>
 
     <div class="slide">

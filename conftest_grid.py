@@ -11,29 +11,48 @@ import pytest_html
 import time
 
 def pytest_addoption(parser):
-    parser.addoption("--browser", action="store", default="chrome", help="browser to execute tests (chrome, firefox, or edge)")
+    parser.addoption("--browsers", nargs="*", default=["chrome"], help="List of browsers to run tests on")
+    parser.addoption("--remote", action="store_true", default=False, help="run tests on selenium grid")
 
 def pytest_generate_tests(metafunc):
-    if "browser" in metafunc.fixturenames:
-        browser = metafunc.config.getoption("browser").split(",")
-        metafunc.parametrize("browser", browser)
-        
+    if 'browser' in metafunc.fixturenames:
+        metafunc.parametrize('browser', metafunc.config.getoption('browsers'))
+
 @pytest.fixture
-def driver(browser):
-    if browser == "chrome":
-        options = ChromeOptions()
-    elif browser == "firefox":
-        options = FirefoxOptions()
+def driver(request, browser):
+    """Initializes and returns a Selenium WebDriver instance.
+
+    Supports both local and remote execution on Selenium Grid.
+    The browser is determined by the pytest_generate_tests hook.
+    Remote execution is enabled with the --remote flag.
+    """
+    remote = request.config.getoption("--remote")
+    
+    if remote:
+        if browser == "chrome":
+            options = webdriver.ChromeOptions()
+        elif browser == "firefox":
+            options = webdriver.FirefoxOptions()
+        elif browser == "edge":
+            options = webdriver.EdgeOptions()
+        else:
+            raise ValueError(f"Browser '{browser}' is not supported for remote execution.")
+            
+        driver_instance = webdriver.Remote(
+            command_executor='http://localhost:4444/wd/hub',
+            options=options
+        )
     else:
-        raise ValueError(f"Browser not supported: {browser}")
+        if browser == "chrome":
+            driver_instance = webdriver.Chrome()
+        elif browser == "firefox":
+            driver_instance = webdriver.Firefox()
+        else:
+            raise ValueError(f"Browser '{browser}' is not supported for local execution.")
 
-    driver = webdriver.Remote(
-        command_executor="http://localhost:4444/wd/hub",
-        options=options,
-    )
-
-    yield driver
-    driver.quit()
+    driver_instance.maximize_window()
+    yield driver_instance
+    driver_instance.quit()
 
 from pathlib import Path
 

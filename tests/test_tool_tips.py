@@ -5,7 +5,7 @@ from utils.data_loader import load_json_data
 test_data = load_json_data("data/test_data.json")
 
 @pytest.mark.widgets
-def test_button_tooltip(driver):
+def test_button_tooltip(driver, browser):
     """Tests the tooltip on the button."""
     tool_tips_page = ToolTipsPage(driver)
     tool_tips_page.navigate(test_data["tool_tips_url"])
@@ -16,7 +16,7 @@ def test_button_tooltip(driver):
     assert tooltip_text == test_data["tool_tip_button_text"]
 
 @pytest.mark.widgets
-def test_field_tooltip(driver):
+def test_field_tooltip(driver, browser):
     """Tests the tooltip on the text field."""
     tool_tips_page = ToolTipsPage(driver)
     tool_tips_page.navigate(test_data["tool_tips_url"])

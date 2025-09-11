@@ -185,3 +185,17 @@ If you run `pytest --remote` and the terminal appears to freeze, it is likely a 
     docker-compose up -d --force-recreate
     ```
 3.  Run your tests.
+
+
+### Running Cross-Browser Parallel Tests
+
+The test framework is now configured to run tests across multiple browsers in parallel.
+
+**Usage:**
+
+To run the tests on specific browsers, use the `--browsers` flag, followed by the browser names. To run in parallel, use the `-n` flag with the number of workers (which should typically match the number of browsers).
+
+```bash
+# Run tests on Chrome and Firefox in parallel on the Grid
+pytest -n 2 --remote --browsers chrome firefox tests/test_tool_tips.py
+```

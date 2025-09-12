@@ -103,16 +103,41 @@ plugins: xdist-3.8.0
             <li>Distributed execution (different machines, different OSs).</li>
         </ul>
         <h2>📦 Requirements:</h2>
+        <p>Download and isntall Vessel</p>
   <ul>
-    <li><a href="https://docs.docker.com/desktop/setup/install/mac-install/" target="_blank">Docker Desktop (Mac)</a></li>
-    <ul>
-        <li>Select right version for your chipset: Intel chip or Apple silicon</li>
-        <li>Open the docker.dmg (downloaded), drag and drop the app</li>
-        <li><img src="screenshots/docker.png" alt="Docker" style="max-width:30%; height:30%;"></li>
-    </ul>
-    <li>Python 3.8+ (we're using 3.9.6)</li>
-    <li>Install dependencies in your environment:
-      <pre><code>pip install pytest selenium pytest-xdist</code></pre>
+    <li><a href="https://istweb.apple.com/scv/en/vessel" target="_blank">Vessel Link<link rel="stylesheet" href=""></a></li>
+        <li>Select download for Mac</li>
+        <li>Install docker composer on terminal</li>
+        <pre><code>brew install docker docker-credential-helper docker-buildx docker-compose</code></pre>
+        <li>Create the docker CLI configuration file in ~/.docker/config.json with the following contents</li>
+        <pre><code># On terminal
+nano ~/.docker/config.json
+
+# copy and paste
+{
+  "credsStore": "osxkeychain",
+  "cliPluginsExtraDirs": [
+    "/opt/homebrew/lib/docker/cli-plugins"
+  ]
+}
+
+# Save and close
+ctrl + x # Confirm yes and enter
+</code></pre>
+<li>Verify Vessel setup is working properly</li>
+<pre><code>docker ps
+
+### Output ###
+# If the error "Cannot connect to Docker daemon at unix:///var/run/docker.sock. Is the Docker daemon running?", follow these steps
+
+vessel compat stop
+vessel compat delete
+vessel compat
+
+docker ps
+
+## If the error persists, run the eval command "$(vessel compat env)" in the terminal
+</code></pre>
     </li>
   </ul>
     </div>
@@ -121,12 +146,7 @@ plugins: xdist-3.8.0
         <h2>3. Setting up the Grid with Docker Compose</h2>
         <p>A docker-compose.yml is a configuration file used by Docker Compose (a tool that orchestrates multiple Docker containers).
 
-        <p>📌 What does it do?</p>
-
-        <p>Instead of having to run a bunch of <strong>'docker run ...'</strong> commands by hand, you describe your entire application in containers in a single .yml file.</p>
-        <p>Then, with a simple command:</p>
-        <pre><code>docker-compose up</code></pre>
-        <h3>What Docker Compose Does?</h3>
+        <h3>📌 What Docker Compose Does?</h3>
         <ul>
             <li>Creates all the containers you have defined.</li>
             <li>Connects them on an internal network.</li>
@@ -219,16 +239,14 @@ plugins: xdist-3.8.0
             <li>When registration succeeds, the Hub lists the node as available and will forward test sessions (WebDriver requests) to that node.</li>
         </ol>
         <h3>Running the Grid:</h3>
-        <pre><code>
-# Start the grid in detached mode
+        <pre><code># Start the grid in detached mode
 docker-compose up -d
 
 # Check the grid console
 http://localhost:4444/
 
 # Stop the grid
-docker-compose down
-        </code></pre>
+docker-compose down</code></pre>
     </div>
 
     <div class="slide">

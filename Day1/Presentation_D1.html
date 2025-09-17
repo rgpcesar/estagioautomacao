@@ -34,6 +34,15 @@
             border-radius: 8px;
             background-color: #fff;
         }
+        .tree {
+        background: #fff;
+        padding: 16px;
+        border-radius: 8px;
+        box-shadow: 0 6px 18px rgba(16,24,40,0.06);
+        max-width: 640px;
+        font-family: "Courier New", monospace;
+        white-space: pre;
+        }
     </style>
     <link rel="stylesheet" 
       href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css">
@@ -49,8 +58,14 @@
         <h3>Install Python, create a virtual environment, and install dependencies.</h3>
         <p>First, ensure Python is installed on your system. Then, create a virtual environment to isolate project dependencies.</p>
         <h4>Install Python:</h4>
-        <p>Search for the version 3.9.6 (Download macOS 64-bit universal2 installer) <a href="https://www.python.org/downloads/macos/" target="_blank">python.org</a>.</p>
-        <p>After install, run on terminal: <i>python3 --version </i></p>
+        <li>Access the link <a href="https://www.python.org/downloads/macos/" target="_blank">python.org</a>.</li>
+        <li>Search for the version 3.9.6</li>
+        <li>Download macOS 64-bit universal2 installer</li>
+        <pre><code class="language-python"># On terminal 
+python3 --version
+
+----- OUTPUT -----
+Python 3.9.6 </code></pre>
         <h4>Create and Activate Virtual Environment:</h4>
         <p><b> What is a virtual environment?</b>
 <li>A Python virtual environment is an isolated environment on your computer where you can run and test your Python projects.</li>
@@ -62,27 +77,32 @@
 <li>Keeps the Python installation on your system clean</li>
 <li>Allows testing with different versions of Python</li>
 
+<h3>Create project structure </h3>
+<li>Go to Documents your home directory, for instance, <code>/Users/rodrigoprado/Documents/</code></li>
+<li>Create a new folder named as 'projeto-automacao'</li>
+<li>Open VS code and navigate to your project</li>
+<li>Create a new folder 'Day1' inside your project folder</li>
+<div class="tree">projeto-automacao/
+├── Day1/
+</div>
 
-        <pre><code># Create a virtual environment named 'myproject'
-python -m venv myproject
-
-# Activate the virtual environment
-# On macOS/Linux
+<h4># Create a virtual environment named 'myproject'</h4>
+<pre><code>python -m venv myproject</code></pre>
+<h4># Activate the virtual environment</h4>
+<pre><code># On macOS/Linux
 source myproject/bin/activate
-<p># On Windows
-myproject\Scripts\activate</code></pre>
-<p>
-Install the cowsay package to test the virtual environment, on terminal    
-<pre><code>pip install cowsay</code> </pre></p>
-<p>Create a file <i>teste.py</i> and insert this short code:</p>
 
-<pre>
-<code>import cowsay
-cowsay.cow("Good Mooooorning!")</code>
-</pre>
-<p>Run on terminal: <i>python test.py</i></p>
-<pre>
-<code>----- OUTPUT -----
+----- OUTPUT -----
+(myproject) rodrigoprado@</code></pre>
+<p>Install the cowsay package to test the virtual environment, on terminal</p>
+<pre><code>pip install cowsay</code></pre>
+<p>On VS code, create a file <i>Day1/teste.py</i> and insert this short code:</p>
+<pre><code>import cowsay
+cowsay.cow("Good Mooooorning!")</code></pre>
+<p>Run on terminal:</p>
+<pre><code>python test.py
+
+----- OUTPUT -----
   _________________
 | Good Mooooorning! |
   =================
@@ -91,12 +111,15 @@ cowsay.cow("Good Mooooorning!")</code>
                     ^__^
                     (oo)\_______
                     (__)\       )\/\
-                        ||----w |
-                        ||     ||
-    </code>
-</pre>
-<p>Run on terminal: <i>deactivate</i></p>
-<p>Run again: <i>python test.py</i></p>
+                        ||----w |   
+                        ||     ||</code></pre>
+<h4># Deactivate the virtual environment</h4>
+<pre><code># On terminal
+deactivate
+
+# Run again:
+python test.py</code></pre>
+<p></i></p>
 <p>What happened?</p>
 
 <div class="slide">
@@ -112,10 +135,15 @@ cowsay.cow("Good Mooooorning!")</code>
 <h4>Install Dependencies:</h4>
 <p>With the virtual environment active, install Selenium and Pytest.</p>
 <pre>
-<code>pip install selenium pytest
+<code># Activate the virtual environment
+source myproject/bin/activate
 
+# Install selenium and pytest packages
+pip install selenium pytest
+
+# Check the version installed
 pytest --version</code></pre>
-<p>Edit the file <i>teste.py</i> and insert this short code:</p>
+<p>Edit the file <i>Day1/test.py</i> and insert this short code:</p>
 
 <pre>
 <code>import cowsay
@@ -133,13 +161,36 @@ print("Selenium version:", selenium.__version__)</code>
         <h2>2. Browser Driver Setup</h2>
         <h3>Download the correct WebDriver for your browser.</h3>
         <li><strong>WebDriver:</strong> The component that acts as a bridge between your test script (e.g., Selenium) and the web browser. Each browser has its own specific WebDriver (like Chromedriver for Chrome or Geckodriver for Firefox) that translates your script's commands into actions the browser can understand.</li>
+        <img src="../screenshots/driver_architecture.png" alt="HTML report created" style="max-width:60%; height:auto;">
         <p>Selenium requires a WebDriver to interface with your chosen browser. Download the driver that matches your browser and version.</p>
         <ul>
             <li><a href="https://googlechromelabs.github.io/chrome-for-testing/" target="_blank">ChromeDriver</a> for Google Chrome.</li>
-            <li><a href="https://github.com/mozilla/geckodriver/releases" target="_blank">GeckoDriver</a> for Mozilla Firefox.</li>
+            <ul>
+                <li>Click in 'stable' link</li>
+                <li>Download zip file related to your machine</li>
+                <li>Chipset 
+                    <a href="https://storage.googleapis.com/chrome-for-testing-public/140.0.7339.82/mac-x64/chromedriver-mac-x64.zip" target="_blank">intel</a>
+                    or
+                    <a href="https://storage.googleapis.com/chrome-for-testing-public/140.0.7339.82/mac-arm64/chromedriver-mac-arm64.zip" target="_blank">apple silicon</a>
+                </li>
+            </ul>
         </ul>
+        <ul>
+            <li><a href="https://github.com/mozilla/geckodriver/releases" target="_blank">GeckoDriver</a> for Mozilla Firefox.</li>
+            <ul>
+                <li>In the latest version, go to 'Assets' session</li>
+                <li>Download zip file related to your machine</li>
+                
+                <li>Chipset 
+                    <a href="https://github.com/mozilla/geckodriver/releases/download/v0.36.0/geckodriver-v0.36.0-macos.tar.gz" target="_blank">intel</a>
+                    or
+                    <a href="https://github.com/mozilla/geckodriver/releases/download/v0.36.0/geckodriver-v0.36.0-macos-aarch64.tar.gz" target="_blank">apple silicon</a>
+                </li>
+            </ul>
+        </ul>
+        
         <p>After downloading, place the executable in a directory that is part of your system's PATH (e.g., <code>/usr/local/bin</code> on macOS/Linux or a specific folder on Windows that you add to Environment Variables).</p>
-        <pre><code>sudo mv chromedriver /usr/local/bin/</code></pre>
+        <pre><code>sudo mv chromedriver geckodriver /usr/local/bin/</code></pre>
     </div>
 
     <div class="slide">
@@ -158,19 +209,23 @@ print("Selenium version:", selenium.__version__)</code>
 </ol></p>
         <h4>Initialize Git:</h4>
 <p>Access your project folder and initialize the project</p>
-        <pre><code>cd projeto-automacao
+        <pre><code>cd ~/Documents/projeto-automacao
 git init
 </code></pre>
         <h4>Create <code>requirements.txt</code>:</h4>
         <p>This file lists your project's dependencies, making it easy for others to set up the environment.</p>
-        <pre><code>pip freeze > requirements.txt</code></pre>
+        <pre><code># Check all packages installed in your environment
+pip list
+
+# create the requirements file
+pip freeze > requirements.txt</code></pre>
         <h4>Create <code>README.md</code>:</h4>
         <p>A README file should explain what the project is and how to set it up.</p>
         <pre><code># My Test Automation Project
 
 ## Setup
 1. Clone the repository.
-2. Create a virtual environment: `python -m venv venv`
+2. Create a virtual environment: `python -m venv <-env_name->`
 3. Activate it: `source venv/bin/activate`
 4. Install dependencies: `pip install -r requirements.txt`
 5. Run tests: `pytest`
@@ -192,7 +247,7 @@ https://github.com/<-your_user->/estagio-cesar/tree/main
     <div class="slide">
         <h2>4. First Test Script</h2>
         <h3>Write a simple test to open a website and verify its title.</h3>
-        <p>Create a file named <code>test_demo.py</code>. Pytest automatically discovers files prefixed with <code>test_</code>.</p>
+        <p>Create a file named <code>Day1/test_demo.py</code>. Pytest automatically discovers files prefixed with <code>test_</code>.</p>
         <pre><code># test_demo.py
 from selenium import webdriver
 
@@ -202,7 +257,13 @@ def test_verify_demoqa_title():
     assert "DEMOQA" in driver.title
     driver.quit()
 </code></pre>
-        <p>To run this test, simply execute <code>pytest</code> in your terminal.</p>
+        <p>To run this test, simply execute 
+        <pre><code># On terminal
+pytest
+
+# another option
+pytest Day1/test_demo.py
+</code></pre>
     </div>
 
     <div class="slide">
@@ -222,7 +283,7 @@ def driver():
     driver_instance.quit()
 </code></pre>
         <h4>Refactor the test to use the fixture:</h4>
-        <p>Now, update <code>test_demo.py</code> to use the `driver` fixture.</p>
+        <p>Now, update <code>Day1/test_demo.py</code> to use the `driver` fixture.</p>
         <pre><code># test_demo.py
 def test_verify_demoqa_title(driver):
     driver.get("https://demoqa.com")

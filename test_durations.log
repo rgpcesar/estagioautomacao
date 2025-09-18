@@ -1,13 +1,3 @@
 === Test Durations Log ===
 
-[START] Test 'tests/test_tool_tips.py::test_field_tooltip[chrome]' - 00:04:21
-
-[START] Test 'tests/test_tool_tips.py::test_button_tooltip[chrome]' - 00:04:21
-[END] Test 'tests/test_tool_tips.py::test_button_tooltip[chrome]' finished in 7.27 seconds.
-
-[START] Test 'tests/test_tool_tips.py::test_button_tooltip[firefox]' - 00:04:28
-[END] Test 'tests/test_tool_tips.py::test_field_tooltip[chrome]' finished in 13.79 seconds.
-
-[START] Test 'tests/test_tool_tips.py::test_field_tooltip[firefox]' - 00:04:34
-[END] Test 'tests/test_tool_tips.py::test_button_tooltip[firefox]' finished in 18.51 seconds.
-[END] Test 'tests/test_tool_tips.py::test_field_tooltip[firefox]' finished in 29.96 seconds.
+[START] Test 'Day1/test_home_page_original.py::test_verify_page_title' - 18:30:40

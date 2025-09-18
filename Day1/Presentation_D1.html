@@ -57,10 +57,12 @@
         <h2>1. Python Setup & Virtual Environment</h2>
         <h3>Install Python, create a virtual environment, and install dependencies.</h3>
         <p>First, ensure Python is installed on your system. Then, create a virtual environment to isolate project dependencies.</p>
-        <h4>Install Python:</h4>
+        <h3>1.1 Install Python:</h3>
         <li>Access the link <a href="https://www.python.org/downloads/macos/" target="_blank">python.org</a>.</li>
         <li>Search for the version 3.9.6</li>
         <li>Download macOS 64-bit universal2 installer</li>
+        <li>Install the package downloaded</li>
+        <li>Check the python version</li>
         <pre><code class="language-python"># On terminal 
 python3 --version
 
@@ -77,7 +79,7 @@ Python 3.9.6 </code></pre>
 <li>Keeps the Python installation on your system clean</li>
 <li>Allows testing with different versions of Python</li>
 
-<h3>Create project structure </h3>
+<h3>1.2 Create project structure </h3>
 <li>Go to Documents your home directory, for instance, <code>/Users/rodrigoprado/Documents/</code></li>
 <li>Create a new folder named as 'projeto-automacao'</li>
 <li>Open VS code and navigate to your project</li>
@@ -86,17 +88,18 @@ Python 3.9.6 </code></pre>
 ├── Day1/
 </div>
 
-<h4># Create a virtual environment named 'myproject'</h4>
+<h3>1.3 Create a virtual environment named 'myproject'</h3>
+<p>Command: python -m venv <_name_of_environment_></p>
 <pre><code>python -m venv myproject</code></pre>
-<h4># Activate the virtual environment</h4>
+<h3>1.4 Activate the virtual environment</h3>
 <pre><code># On macOS/Linux
 source myproject/bin/activate
 
 ----- OUTPUT -----
 (myproject) rodrigoprado@</code></pre>
-<p>Install the cowsay package to test the virtual environment, on terminal</p>
+<p>1.5 Install the cowsay package to test the virtual environment, on terminal</p>
 <pre><code>pip install cowsay</code></pre>
-<p>On VS code, create a file <i>Day1/teste.py</i> and insert this short code:</p>
+<p>1.6 On VS code, create a file <i>Day1/teste.py</i> and insert this short code:</p>
 <pre><code>import cowsay
 cowsay.cow("Good Mooooorning!")</code></pre>
 <p>Run on terminal:</p>
@@ -113,7 +116,7 @@ cowsay.cow("Good Mooooorning!")</code></pre>
                     (__)\       )\/\
                         ||----w |   
                         ||     ||</code></pre>
-<h4># Deactivate the virtual environment</h4>
+<h3>1.7 Deactivate the virtual environment</h3>
 <pre><code># On terminal
 deactivate
 
@@ -132,7 +135,7 @@ python test.py</code></pre>
 
 
 
-<h4>Install Dependencies:</h4>
+<h3>1.8 Install Dependencies:</h3>
 <p>With the virtual environment active, install Selenium and Pytest.</p>
 <pre>
 <code># Activate the virtual environment
@@ -143,7 +146,7 @@ pip install selenium pytest
 
 # Check the version installed
 pytest --version</code></pre>
-<p>Edit the file <i>Day1/test.py</i> and insert this short code:</p>
+<p>1.9 Edit the file <i>Day1/test.py</i> and insert this short code:</p>
 
 <pre>
 <code>import cowsay
@@ -161,8 +164,10 @@ print("Selenium version:", selenium.__version__)</code>
         <h2>2. Browser Driver Setup</h2>
         <h3>Download the correct WebDriver for your browser.</h3>
         <li><strong>WebDriver:</strong> The component that acts as a bridge between your test script (e.g., Selenium) and the web browser. Each browser has its own specific WebDriver (like Chromedriver for Chrome or Geckodriver for Firefox) that translates your script's commands into actions the browser can understand.</li>
-        <img src="../screenshots/driver_architecture.png" alt="HTML report created" style="max-width:60%; height:auto;">
-        <p>Selenium requires a WebDriver to interface with your chosen browser. Download the driver that matches your browser and version.</p>
+        <h4>Selenium WebDriver Framework Architecture</h4>
+        <p>Selenium WebDriver is the core component of Selenium which provides a programming interface for driving the web browsers. It allows to write tests in different programming languages to interact with the web elements, simulate user interactions and perform assertions.</p>
+        <img src="../screenshots/driver_architecture.jpg" alt="HTML report created" style="max-width:60%; height:auto;">
+        <p>2.1. Selenium requires a WebDriver to interface with your chosen browser. Download the driver that matches your browser and version.</p>
         <ul>
             <li><a href="https://googlechromelabs.github.io/chrome-for-testing/" target="_blank">ChromeDriver</a> for Google Chrome.</li>
             <ul>
@@ -189,7 +194,7 @@ print("Selenium version:", selenium.__version__)</code>
             </ul>
         </ul>
         
-        <p>After downloading, place the executable in a directory that is part of your system's PATH (e.g., <code>/usr/local/bin</code> on macOS/Linux or a specific folder on Windows that you add to Environment Variables).</p>
+        <p>2.2. After downloading, place the executable in a directory that is part of your system's PATH (e.g., <code>/usr/local/bin</code> on macOS/Linux or a specific folder on Windows that you add to Environment Variables).</p>
         <pre><code>sudo mv chromedriver geckodriver /usr/local/bin/</code></pre>
     </div>
 
@@ -198,7 +203,7 @@ print("Selenium version:", selenium.__version__)</code>
         <h3>Set up a Git repository for your project.</h3>
         <p>Version control is crucial. Initialize a Git repository and create essential files.</p>
         <h4>
-        Create your git repository
+        3.1. Create your git repository
         </h4>
         <p>
 <ol>
@@ -207,19 +212,19 @@ print("Selenium version:", selenium.__version__)</code>
   <li>Choose whether it will be public or private. Don't check the option to create a README, .gitignore or license (this avoids conflicts with the local repository)</li>
   <li>Click on "Create repository"</li>
 </ol></p>
-        <h4>Initialize Git:</h4>
+        <h4>3.2. Initialize Git:</h4>
 <p>Access your project folder and initialize the project</p>
         <pre><code>cd ~/Documents/projeto-automacao
 git init
 </code></pre>
-        <h4>Create <code>requirements.txt</code>:</h4>
+        <h4>3.3. Create <code>requirements.txt</code>:</h4>
         <p>This file lists your project's dependencies, making it easy for others to set up the environment.</p>
         <pre><code># Check all packages installed in your environment
 pip list
 
 # create the requirements file
 pip freeze > requirements.txt</code></pre>
-        <h4>Create <code>README.md</code>:</h4>
+        <h4>3.4. Create <code>README.md</code>:</h4>
         <p>A README file should explain what the project is and how to set it up.</p>
         <pre><code># My Test Automation Project
 
@@ -230,7 +235,7 @@ pip freeze > requirements.txt</code></pre>
 4. Install dependencies: `pip install -r requirements.txt`
 5. Run tests: `pytest`
 </code></pre>
-<p>Make the first commit:</p>
+<p>3.5. Make the first commit:</p>
 <pre><code>git add README.md
 git add requirements.txt
 git remote add origin https://github.com/<-your_user->/estagio-cesar.git ## <i>git remote add origin https://github.com/rgpcesar/estagio-cesar.git</i>
@@ -247,44 +252,62 @@ https://github.com/<-your_user->/estagio-cesar/tree/main
     <div class="slide">
         <h2>4. First Test Script</h2>
         <h3>Write a simple test to open a website and verify its title.</h3>
-        <p>Create a file named <code>Day1/test_demo.py</code>. Pytest automatically discovers files prefixed with <code>test_</code>.</p>
-        <pre><code># test_demo.py
+        <p>4.1. Create a file named <code>Day1/test_home_page.py</code>. Pytest automatically discovers files prefixed with <code>test_</code>.</p>
+        <pre><code># test_home_page.py
 from selenium import webdriver
 
 def test_verify_demoqa_title():
     driver = webdriver.Chrome()
+
     driver.get("https://demoqa.com")
+
     assert "DEMOQA" in driver.title
+    
     driver.quit()
 </code></pre>
-        <p>To run this test, simply execute 
+        <p>4.2. To run this test, simply execute 
         <pre><code># On terminal
 pytest
 
 # another option
-pytest Day1/test_demo.py
+pytest Day1/test_home_page.py
 </code></pre>
+    <h3>🐍 Python Selenium Code Explanation</h3>
+        <p>This line <strong>imports</strong> the necessary <code>webdriver</code> module from the selenium library. This module is essential for controlling a web browser.</p>
+        <pre><code>from selenium import webdriver</code></pre>
+        <p>This defines a Python <strong>function</strong>. The <code>test_</code> prefix is a special convention that <code>pytest</code> uses to automatically discover and run this function as a test case.</p>        
+        <pre><code>def test_verify_demoqa_title():</code></pre>
+        <p>This line creates a <strong>new instance</strong> of the Chrome web browser. The <code>driver</code> object becomes your way of interacting with and controlling this browser session.</p>
+        <pre><code>driver = webdriver.Chrome()</code></pre>
+        <p>This command instructs the browser to <strong>navigate</strong> to the specified URL, "https://demoqa.com".</p>   
+        <pre><code>driver.get("https://demoqa.com")</code></pre>
+        <p>This is the <strong>core of the test</strong>. It gets the title of the current webpage (<code>driver.title</code>) and the <code>assert</code> statement checks if the string "DEMOQA" is present within it. If the condition is true, the test passes; otherwise, it fails.</p>
+        <pre><code>assert "DEMOQA" in driver.title</code></pre>
+        <p>This line <strong>closes the entire browser window</strong> and ends the webdriver session. This is important for cleaning up and releasing the resources used by the browser.</p>
+        <pre><code>driver.quit()</code></pre>
     </div>
 
     <div class="slide">
         <h2>5. Using Pytest Fixtures (conftest.py)</h2>
         <h3>Create a fixture to manage the WebDriver lifecycle.</h3>
-        <p>Fixtures help set up and tear down resources for your tests. Create a <code>conftest.py</code> file in your project's root directory.</p>
-        <pre><code># conftest.py
-import pytest
+        <p><code>conftest.py</code> is a special file in the pytest testing framework for Python. It serves as a local, per-directory plugin system, allowing you to define and share fixtures, hooks, and other test-related configurations across multiple test files within a project.</p>
+        <p>Pytest fixtures are functions designed to set up a stable and consistent environment for your tests. They provide data, resources, or state necessary for tests to run reliably and repeatedly.</p> 
+        <h4>5.1. Create a <code>conftest.py</code> file in your project's root directory.</h4>
+        <pre><code>import pytest
 from selenium import webdriver
 
 @pytest.fixture
 def driver():
     # Setup: initialize the WebDriver
-    driver_instance = webdriver.Chrome()
-    yield driver_instance
+    driver = webdriver.Chrome()
+    driver.maximize_window()
+    yield driver
     # Teardown: close the WebDriver
-    driver_instance.quit()
+    driver.quit()
 </code></pre>
-        <h4>Refactor the test to use the fixture:</h4>
-        <p>Now, update <code>Day1/test_demo.py</code> to use the `driver` fixture.</p>
-        <pre><code># test_demo.py
+        <h4>5.2. Refactor the test to use the fixture:</h4>
+        <p>Now, update <code>Day1/test_home_page.py</code> to use the `driver` fixture.</p>
+        <pre><code># test_home_page.py
 def test_verify_demoqa_title(driver):
     driver.get("https://demoqa.com")
     assert "DEMOQA" in driver.title

@@ -14,3 +14,8 @@ def test_check_box(driver):
     # Validate if checkbox was ticked
     notes_input = driver.find_element(By.ID, "tree-node-notes")
     assert notes_input.is_selected()
+
+
+def test_check_box_commands(driver):
+    driver.get("https://demoqa.com/checkbox")
+    

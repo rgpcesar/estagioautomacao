@@ -6,7 +6,9 @@ from selenium.webdriver.support import expected_conditions as EC
 class ToolTipsPage:
     def __init__(self, driver):
         self.driver = driver
+        # self.url = "https://demoqa.com/tool-tips"
         self.wait = WebDriverWait(self.driver, 10)
+        self.actions = ActionChains(driver)
          # Locators
         self.TOOL_TIP_BUTTON = (By.ID, "toolTipButton")
         self.TOOL_TIP_FIELD = (By.ID, "toolTipTextField")
@@ -17,11 +19,16 @@ class ToolTipsPage:
 
     def hover_over_button(self):
         button = self.driver.find_element(*self.TOOL_TIP_BUTTON)
-        ActionChains(self.driver).move_to_element(button).perform()
+        self.actions.move_to_element(button).perform()
 
     def hover_over_field(self):
         field = self.driver.find_element(*self.TOOL_TIP_FIELD)
-        ActionChains(self.driver).move_to_element(field).perform()
+        self.actions.move_to_element(field).perform()
+    
+    def hover_over_link(self):
+        field = self.driver.find_element(*self.TOOL_TIP_FIELD)
+        self.actions.move_to_element(field).perform()
+
 
     def get_tooltip_text(self):
         tooltip = self.wait.until(EC.visibility_of_element_located(self.TOOL_TIP_MESSAGE))

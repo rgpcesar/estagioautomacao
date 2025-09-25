@@ -14,7 +14,7 @@ def test_dinamic_button(driver):
     assert dynamic_property.is_displayed()
     dynamic_property.click()
     
-    # time.sleep(6)
+    # time.sleep(4)
 
     # visible_After_button = driver.find_element(By.ID, "visibleAfter")
     # driver.execute_script("arguments[0].scrollIntoView(true);", visible_After_button)
@@ -24,5 +24,7 @@ def test_dinamic_button(driver):
 
     visible_After_button = wait.until(
         EC.element_to_be_clickable((By.ID, "visibleAfter"))
+        
     )
+    # driver.execute_script("arguments[0].scrollIntoView(true);", dynamic_property)
     visible_After_button.click()

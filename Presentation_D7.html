@@ -48,20 +48,146 @@
 </head>
 <body>
     <h1>Web Test Automation - Day 7</h1>
-    <h3>Parallel Execution with Selenium Grid and Docker</h3>
+    <h3>Running tests in diffent browsers and in parallel</h3>
 
     <div class="slide">
         <h2>Agenda</h2>
         <ul>
+            <li>Updating conftest to run same test case in different browsers</li>
+            <li>Generating new report with execution data</li>
             <li>Parallel Execution with `pytest-xdist`</li>
-            <li>Introduction to Selenium Grid</li>
-            <li>Setting up the Grid with Docker Compose</li>
-            <li>Running Tests on the Grid</li>
-            <li>Using Custom Capabilities</li>
         </ul>
     </div>
-       <div class="slide">
-        <h2>1. Parallel Execution with `pytest-xdist`</h2>
+    <div class="slide">
+        <h2>1. Updating conftest.py </h2>
+        <p>Les's update our conftest.py to execute same test case in different browsers</p>
+        <h3>On <code>conftest.py</code>:</h3>
+        <pre><code class="language-python">import pytest
+from selenium import webdriver
+import json, time
+from pathlib import Path
+import os, pytest_html
+
+# def pytest_addoption(parser):
+#     parser.addoption("--browser", action="store", default="chrome", help="browser to execute tests (chrome or firefox)")
+
+# @pytest.fixture
+@pytest.fixture(params=["chrome", "firefox"], scope="function")
+def driver(request):
+    # browser = request.config.getoption("--browser").lower()
+    browser = request.param
+    if browser == "chrome":
+        driver_instance = webdriver.Chrome()
+    elif browser == "firefox":
+        driver_instance = webdriver.Firefox()
+    else:
+        raise ValueError(f"Browser '{browser}' is not supported.")
+    
+    driver_instance.maximize_window()
+    request.node.browser = browser
+
+    yield driver_instance
+    driver_instance.quit()</code></pre>
+
+        <h4>Running a example:</h4>
+        <p>Check your test case will run on Firefox and Chromes</p>
+        <pre><code>pytest tests/test_tool_tips.py -v </code></pre>
+        <h4>Output:</h4>
+        <pre><code class="language-python">rootdir: /Users/rodrigoprado/rgp/ProgramaEstagio/estagio-automacao
+configfile: pytest.ini
+plugins: allure-pytest-2.15.0, html-4.1.1, xdist-3.8.0, metadata-3.1.1, cov-6.3.0
+collected 4 items                                                                                                                                                               
+
+tests/test_tool_tips_original.py::test_button_tooltip[chrome] PASSED                                                                                                      [ 25%]
+tests/test_tool_tips_original.py::test_button_tooltip[firefox] PASSED                                                                                                     [ 50%]
+tests/test_tool_tips_original.py::test_field_tooltip[chrome] PASSED                                                                                                       [ 75%]
+tests/test_tool_tips_original.py::test_field_tooltip[firefox] PASSED   </code></pre>
+    </div>
+     <div class="slide">
+        <h2>2. Generating new report with execution data`</h2>
+        <p>Let's update our <strong><code>conftest.py</code></strong> again to create a new report with the execution data</p>
+        
+        <pre><code class="language-python">import csv
+
+report_data = []
+
+@pytest.hookimpl(hookwrapper=True)
+def pytest_runtest_makereport(item, call):
+
+    outcome = yield
+    report = outcome.get_result()
+    extra = getattr(report, "extra", [])
+    if report.when == "call": # and report.failed:
+
+        status = 'Passed' if report.passed else 'Failed'
+        browser = getattr(item, 'browser', 'N/A')
+        test_name = item.name
+        duration = f"{report.duration:.4f}s"
+
+        if report.failed:
+            # Create screenshots directory if it doesn't exist
+            if not os.path.exists("screenshots"):
+                os.makedirs("screenshots")
+            # Take screenshot
+            driver = item.funcargs['driver']
+            screenshot_file = os.path.join("screenshots", f"{item.name}_error.png")
+            driver.save_screenshot(screenshot_file)
+            # Add screenshot to the HTML report
+            if screenshot_file:
+                html = f'&lt;div&gt;&lt;img src="{screenshot_file}" alt="screenshot" style="width:304px;height:228px;" ' \
+            f'onclick="window.open(this.src)" align="right"/&gt;&lt;/div&gt;'
+                    extra.append(pytest_html.extras.html(html))
+        
+        report_data.append({
+            "browser": browser.capitalize(),
+            "test_case_name": test_name,
+            "status": status,
+            "timestamp": duration
+        })
+
+    report.extra = extra
+
+def pytest_sessionfinish(session):
+    """
+    Hook executed in the end of test session to create the CSV report.
+    """
+    if not report_data:
+        return
+        
+    # Ordena os dados por navegador para um relatório mais legível
+    sorted_reports = sorted(report_data, key=lambda x: x['navegador'])
+    
+    keys = sorted_reports[0].keys()
+    
+    with open('test_report.csv', 'w', newline='') as output_file:
+        dict_writer = csv.DictWriter(output_file, fieldnames=keys)
+        dict_writer.writeheader()
+        dict_writer.writerows(sorted_reports)
+
+    print("\nReport 'test_report.csv' generated successfully")</code></pre>
+        <h3>Run any test again, for instance:</h3>
+        <pre><code class="language-python">pytest tests/test_tool_tips_original.py -v</code></pre>
+        <h4>Output:</h4>
+        <pre><code class="language-python">rootdir: /Users/rodrigoprado/rgp/ProgramaEstagio/estagio-automacao
+configfile: pytest.ini
+plugins: allure-pytest-2.15.0, html-4.1.1, xdist-3.8.0, metadata-3.1.1, cov-6.3.0
+collected 4 items                                                                                                                                                               
+
+tests/test_tool_tips_original.py::test_button_tooltip[chrome] PASSED                                                                                                      [ 25%]
+tests/test_tool_tips_original.py::test_button_tooltip[firefox] PASSED                                                                                                     [ 50%]
+tests/test_tool_tips_original.py::test_field_tooltip[chrome] PASSED                                                                                                       [ 75%]
+tests/test_tool_tips_original.py::test_field_tooltip[firefox] PASSED   </code></pre>
+<h4>Check 'test_report.csv file created in the project root</h4>
+<p><img src="screenshots/test_report.png" alt="HTML report created" style="max-width:auto; height:150px;"></p>
+<pre><code># test_report.csv
+browser,test_case_name,status,timestamp
+Chrome,test_button_tooltip[chrome],Passed,5.1125s
+Chrome,test_field_tooltip[chrome],Failed,14.3820s
+Firefox,test_button_tooltip[firefox],Passed,8.5066s
+Firefox,test_field_tooltip[firefox],Passed,8.2310s</code></pre>
+    </div>
+    <div class="slide">
+        <h2>3. Parallel Execution with `pytest-xdist`</h2>
         <p><strong>pytest-xdist</strong> is a Pytest plugin that allows you to:</p>
         <ul>
         <li><strong>Run tests in parallel</strong> (multiple test processes at the same time).</li>
@@ -88,253 +214,9 @@ plugins: xdist-3.8.0
 2 workers [9 items]     
 .........</code></pre>
     </div>
-    <div class="slide">
-        <h2>2. Introduction to Selenium Grid</h2>
-        <p>Selenium Grid is a component of the Selenium suite that specializes in running multiple tests across different browsers, operating systems, and machines in parallel. This capability significantly speeds up test execution and expands test coverage.</p>
-        <h3>Core Concepts:</h3>
-        <ul>
-            <li><strong>Hub:</strong> The Hub is the central point in the Selenium Grid that receives test requests and distributes them to the appropriate Nodes. It acts as a manager, keeping track of which nodes are available and what their capabilities are (e.g., which browser, which platform). There is only one Hub in a Grid.</li>
-            <li><strong>Nodes:</strong> Nodes are the machines (physical or virtual) that execute the tests. Each Node is registered with the Hub and advertises its capabilities. A Grid can have multiple Nodes, and each Node can have multiple browser instances. For example, a single Node could run instances of Chrome, Firefox, and Edge.</li>
-        </ul>
-          <h2>Useful:</h2>
-        <ul>
-            <li>Cross-browser testing (testing in several browsers).</li>
-            <li>Parallelism (running several tests simultaneously).</li>
-            <li>Distributed execution (different machines, different OSs).</li>
-        </ul>
-        <h2>📦 Requirements:</h2>
-        <p>Download and isntall Vessel</p>
-  <ul>
-    <li><a href="https://istweb.apple.com/scv/en/vessel" target="_blank">Vessel Link<link rel="stylesheet" href=""></a></li>
-        <li>Select download for Mac</li>
-        <li>Install docker composer on terminal</li>
-        <pre><code>brew install docker docker-credential-helper docker-buildx docker-compose</code></pre>
-        <li>Create the docker CLI configuration file in ~/.docker/config.json with the following contents</li>
-        <pre><code># On terminal
-nano ~/.docker/config.json
-
-# copy and paste
-{
-  "credsStore": "osxkeychain",
-  "cliPluginsExtraDirs": [
-    "/opt/homebrew/lib/docker/cli-plugins"
-  ]
-}
-
-# Save and close
-ctrl + x # Confirm yes and enter
-</code></pre>
-<li>Verify Vessel setup is working properly</li>
-<pre><code>docker ps
-
-### Output ###
-# If the error "Cannot connect to Docker daemon at unix:///var/run/docker.sock. Is the Docker daemon running?", follow these steps
-
-vessel compat stop
-vessel compat delete
-vessel compat
-
-docker ps
-
-## If the error persists, run the eval command "$(vessel compat env)" in the terminal
-</code></pre>
-    </li>
-  </ul>
-    </div>
 
     <div class="slide">
-        <h2>3. Setting up the Grid with Docker Compose</h2>
-        <p>A docker-compose.yml is a configuration file used by Docker Compose (a tool that orchestrates multiple Docker containers).
-
-        <h3>📌 What Docker Compose Does?</h3>
-        <ul>
-            <li>Creates all the containers you have defined.</li>
-            <li>Connects them on an internal network.</li>
-            <li>Applies volumes, ports, environment variables, etc.</li>
-            <li>Keeps everything organized.</li>
-        </ul>
-
-        <h3><code>docker-compose.yml</code></h3>
-        <pre><code>services:
-  hub:
-    image: selenium/hub:latest
-    container_name: selenium-hub
-    ports:
-      - "4442:4442"
-      - "4443:4443"
-      - "4444:4444"
-    environment:
-      - SE_HUB_HOST=localhost
-
-  chrome:
-    image: selenium/node-chromium:latest
-    container_name: selenium-node-chromium
-    shm_size: 2gb
-    depends_on:
-      - hub
-    environment:
-      - SE_EVENT_BUS_HOST=hub
-      - SE_EVENT_BUS_PUBLISH_PORT=4442
-      - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
-      
-  firefox:
-    image: selenium/node-firefox:latest
-    container_name: selenium-node-firefox
-    shm_size: 2gb
-    depends_on:
-      - hub
-    environment:
-      - SE_EVENT_BUS_HOST=hub
-      - SE_EVENT_BUS_PUBLISH_PORT=4442
-      - SE_EVENT_BUS_SUBSCRIBE_PORT=4443</code></pre>
-      <h3>Line-by-line explanation</h3>
-        <details>
-            <summary><code>services:</code></summary>
-            <p>The top-level key where you declare every container (service) you want composed together. Each named entry under <code>services</code> becomes a Docker container managed by Compose.</p>
-        </details>
-
-        <details>
-            <summary><code>hub:</code> (the Selenium Hub)</summary>
-            <ul>
-            <li><strong><code>image: selenium/hub:latest</code></strong> — the Docker image used to create the Hub container. The Hub coordinates test sessions and distributes them to registered nodes.</li>
-            <li><strong><code>container_name: selenium-hub</code></strong> — a fixed, human-friendly container name for easier debugging and logs.</li>
-            <li><strong><code>ports:</code></strong> — maps container ports to the host so services/clients can reach them from outside Docker. Example ports:
-                <ul>
-                <li><code>4444</code> — the Hub API / Web UI (commonly exposed as <code>4444:4444</code>).</li>
-                <li><code>4442</code> — event bus publish port (used by nodes).</li>
-                <li><code>4443</code> — event bus subscribe port (used by nodes).</li>
-                </ul>
-            </li>
-            <li><strong><code>environment:</code></strong> — environment variables that configure the Hub. For example, <code>SE_HUB_HOST</code> can tell the Hub what hostname to advertise. <em>Note:</em> when using Compose, you usually don’t need to set it manually — Compose networking resolves service names.</li>
-            </ul>
-        </details>
-
-        <details>
-            <summary><code>chrome:</code> and <code>firefox:</code> (the nodes)</summary>
-            <ul>
-            <li><strong><code>image</code></strong> — node images provide a browser instance and the node runtime that registers to the Hub:
-                <ul>
-                <li><code>selenium/node-chromium</code> (Chromium node — common on ARM platforms)</li>
-                <li><code>selenium/node-firefox</code></li>
-                </ul>
-            </li>
-
-            <li><strong><code>shm_size: 2gb</code></strong> — increases the container's shared memory size (<code>/dev/shm</code>). Browsers (especially Chrome/Chromium) use shared memory; small defaults can cause crashes or rendering problems. Setting to <code>2gb</code> is a common recommendation.</li>
-
-            <li><strong><code>depends_on: - hub</code></strong> — makes Compose start the Hub service before the node. Important: <em>depends_on</em> ensures startup order but does <strong>not</strong> wait for the Hub to be fully ready.</li>
-
-            <li><strong><code>environment</code></strong> — variables the node uses to find and register to the Hub:
-                <ul>
-                <li><code>SE_EVENT_BUS_HOST=hub</code> — tells the node to contact the host named <code>hub</code> (Compose service name) for event bus communication.</li>
-                <li><code>SE_EVENT_BUS_PUBLISH_PORT=4442</code> and <code>SE_EVENT_BUS_SUBSCRIBE_PORT=4443</code> — define ports used by the Grid’s event bus for publish/subscribe messaging between Hub and nodes.</li>
-                </ul>
-            </li>
-            </ul>
-        </details>
-
-        <h3>How the Grid components interact (high level)</h3>
-        <ol>
-            <li>The Hub starts and exposes a Web UI / API and an internal event bus.</li>
-            <li>Each Node starts, reads environment variables to locate the Hub’s event bus, and attempts to connect and register itself.</li>
-            <li>When registration succeeds, the Hub lists the node as available and will forward test sessions (WebDriver requests) to that node.</li>
-        </ol>
-        <h3>Running the Grid:</h3>
-        <pre><code># Start the grid in detached mode
-docker-compose up -d
-
-# Check the grid console
-http://localhost:4444/
-
-# Stop the grid
-docker-compose down</code></pre>
-    </div>
-
-    <div class="slide">
-        <h2>3. Running Tests on the Grid</h2>
-        <p>We've refactored our `driver` fixture in `conftest.py` to support remote execution.</p>
-        <pre><code># conftest.py
-
-# ... 
-
-def pytest_addoption(parser):
-    parser.addoption("--browser", action="store", default="chrome", help="browser to execute tests (chrome, firefox, or edge)")
-
-def pytest_generate_tests(metafunc):
-    if "browser" in metafunc.fixturenames:
-        browser = metafunc.config.getoption("browser").split(",")
-        metafunc.parametrize("browser", browser)
-        
-@pytest.fixture
-def driver(browser):
-    if browser == "chrome":
-        options = ChromeOptions()
-    elif browser == "firefox":
-        options = FirefoxOptions()
-    else:
-        raise ValueError(f"Browser not supported: {browser}")
-
-    driver = webdriver.Remote(
-        command_executor="http://localhost:4444/wd/hub",
-        options=options,
-    )
-
-    yield driver
-    driver.quit()
-# ... 
-</code></pre>
-<h3>Executing tests:</h3>
-        <pre><code># On terminal
-pytest -n2 -v --browser chrome,firefox tests/test_tool_tips.py</code></pre>
-<h3>Output</h3>
-    <pre><code>$ pytest -n2 -v --browser chrome,firefox tests/test_tool_tips.py
-================================================================================================================================== test session starts ===================================================================================================================================
-platform darwin -- Python 3.9.6, pytest-8.4.1, pluggy-1.6.0 -- /Users/rodrigoprado/rgp/ProgramaEstagio/estagio-automacao/myproject/bin/python3
-cachedir: .pytest_cache
-metadata: {'Python': '3.9.6', 'Platform': 'macOS-15.1.1-arm64-arm-64bit', 'Packages': {'pytest': '8.4.1', 'pluggy': '1.6.0'}, 'Plugins': {'allure-pytest': '2.15.0', 'html': '4.1.1', 'xdist': '3.8.0', 'metadata': '3.1.1', 'cov': '6.3.0'}}
-rootdir: /Users/rodrigoprado/rgp/ProgramaEstagio/estagio-automacao
-configfile: pytest.ini
-plugins: allure-pytest-2.15.0, html-4.1.1, xdist-3.8.0, metadata-3.1.1, cov-6.3.0
-2 workers [4 items]     
-scheduling tests via LoadScheduling
-
-tests/test_tool_tips.py::test_field_tooltip[chrome] 
-tests/test_tool_tips.py::test_button_tooltip[chrome] 
-[gw0] [ 25%] PASSED tests/test_tool_tips.py::test_button_tooltip[chrome] 
-tests/test_tool_tips.py::test_button_tooltip[firefox] 
-[gw1] [ 50%] PASSED tests/test_tool_tips.py::test_field_tooltip[chrome] 
-tests/test_tool_tips.py::test_field_tooltip[firefox] 
-[gw0] [ 75%] PASSED tests/test_tool_tips.py::test_button_tooltip[firefox] 
-[gw1] [100%] PASSED tests/test_tool_tips.py::test_field_tooltip[firefox] </code></pre>
-    </div>
-
-
-
-    <div class="slide">
-        <h2>Explore the grid</h2>
-        <p>Let's run the full suite tests/ on the grid</p>
-    </div>
-        <div class="slide">
-        <h2>Submit your changes</h2>
-        <p>Now you created your firt test script and update conftest.py, update your repository with latest changes</p>
-        <p>
-            <ol>
-                <li>In the terminal, navigate to your automation project, for istance, /Users/rodrigoprado/rgp/ProgramaEstagio/projeto-automacao</li>
-                <li>Check the changes: git status</li>
-                <li>Create a new branch: git checkout -b <-name_for_your_branch-></li>
-                <li>Add your files: git add test_demo.py</li>
-                <li>Create a commit with a message: git commit -m "my first script"</li>
-                <li>Submit the changes: git push origin <-name_for_your_branch-></li>
-                <li>Verify the push generates a link to merge your code</li>
-            </ol>
-        </p>
-        <p>Access your repository to merge the new code:
- https://github.com/rgpcesar/estagio-cesar/pull/new/adding_test_case</p>
-    </div>
-
-    <div class="slide">
-        <h2>Conclusion</h2>
-        <p>By leveraging Selenium Grid and Docker, we can create a scalable, parallel testing environment that significantly improves the efficiency and scope of our test automation efforts.</p>
-        <p>Happy Testing!</p>
+        <h3>Happy automation testing!</h3>
     </div>
 
 </body>

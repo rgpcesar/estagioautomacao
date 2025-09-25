@@ -21,7 +21,7 @@ class ElementsPage:
         return self.driver.find_element(*self.check_box_css).is_displayed()
     
     def radio_button_is_visible(self):
-        return self.driver.find_element(*self.check_box_css).is_displayed()
+        return self.driver.find_element(*self.radio_button_xpath).is_displayed()
     
     def get_text_menu(self):
         visible_text = self.driver.find_element(*self.text_box_id).text

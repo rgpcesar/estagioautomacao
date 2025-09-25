@@ -1,3 +1,196 @@
 === Test Durations Log ===
 
-[START] Test 'Day1/test_home_page_original.py::test_verify_page_title' - 18:30:40
+[START] Test 'tests/test_tool_tips_original.py::test_button_tooltip' - 14:10:48
+[END] Test 'tests/test_tool_tips_original.py::test_button_tooltip' finished in 10.65 seconds.
+
+[START] Test 'tests/test_tool_tips_original.py::test_field_tooltip' - 14:10:59
+[END] Test 'tests/test_tool_tips_original.py::test_field_tooltip' finished in 6.62 seconds.
+
+[START] Test 'tests/test_tool_tips_original.py::test_button_tooltip' - 14:12:33
+[END] Test 'tests/test_tool_tips_original.py::test_button_tooltip' finished in 8.37 seconds.
+
+[START] Test 'tests/test_tool_tips_original.py::test_field_tooltip' - 14:12:42
+[END] Test 'tests/test_tool_tips_original.py::test_field_tooltip' finished in 5.64 seconds.
+
+[START] Test 'tests/test_practice_form.py::test_fill_practice_form[data0]' - 09:35:20
+[END] Test 'tests/test_practice_form.py::test_fill_practice_form[data0]' finished in 31.29 seconds.
+
+[START] Test 'tests/test_practice_form.py::test_fill_practice_form[data1]' - 09:35:51
+[END] Test 'tests/test_practice_form.py::test_fill_practice_form[data1]' finished in 7.90 seconds.
+
+[START] Test 'tests/test_practice_form.py::test_fill_practice_form[data0]' - 09:37:22
+[END] Test 'tests/test_practice_form.py::test_fill_practice_form[data0]' finished in 10.14 seconds.
+
+[START] Test 'tests/test_practice_form.py::test_fill_practice_form[data1]' - 09:37:32
+[END] Test 'tests/test_practice_form.py::test_fill_practice_form[data1]' finished in 7.36 seconds.
+
+[START] Test 'tests/test_practice_form.py::test_fill_practice_form[data0]' - 09:39:29
+[END] Test 'tests/test_practice_form.py::test_fill_practice_form[data0]' finished in 9.98 seconds.
+
+[START] Test 'tests/test_practice_form.py::test_fill_practice_form[data1]' - 09:39:39
+[END] Test 'tests/test_practice_form.py::test_fill_practice_form[data1]' finished in 7.94 seconds.
+
+[START] Test 'tests/test_tool_tips_original.py::test_button_tooltip[chrome]' - 22:27:24
+[END] Test 'tests/test_tool_tips_original.py::test_button_tooltip[chrome]' finished in 9.95 seconds.
+
+[START] Test 'tests/test_tool_tips_original.py::test_button_tooltip[firefox]' - 22:27:34
+[END] Test 'tests/test_tool_tips_original.py::test_button_tooltip[firefox]' finished in 17.82 seconds.
+
+[START] Test 'tests/test_tool_tips_original.py::test_field_tooltip[chrome]' - 22:27:52
+[END] Test 'tests/test_tool_tips_original.py::test_field_tooltip[chrome]' finished in 5.81 seconds.
+
+[START] Test 'tests/test_tool_tips_original.py::test_field_tooltip[firefox]' - 22:27:58
+[END] Test 'tests/test_tool_tips_original.py::test_field_tooltip[firefox]' finished in 18.10 seconds.
+
+[START] Test 'tests/test_tool_tips_original.py::test_button_tooltip[chrome]' - 22:55:56
+[END] Test 'tests/test_tool_tips_original.py::test_button_tooltip[chrome]' finished in 9.82 seconds.
+
+[START] Test 'tests/test_tool_tips_original.py::test_button_tooltip[firefox]' - 22:56:05
+[END] Test 'tests/test_tool_tips_original.py::test_button_tooltip[firefox]' finished in 25.97 seconds.
+
+[START] Test 'tests/test_tool_tips_original.py::test_field_tooltip[chrome]' - 22:56:31
+[END] Test 'tests/test_tool_tips_original.py::test_field_tooltip[chrome]' finished in 7.25 seconds.
+
+[START] Test 'tests/test_tool_tips_original.py::test_field_tooltip[firefox]' - 22:56:39
+[END] Test 'tests/test_tool_tips_original.py::test_field_tooltip[firefox]' finished in 15.22 seconds.
+
+[START] Test 'tests/test_tool_tips_original.py::test_button_tooltip[chrome]' - 22:57:35
+[END] Test 'tests/test_tool_tips_original.py::test_button_tooltip[chrome]' finished in 8.33 seconds.
+
+[START] Test 'tests/test_tool_tips_original.py::test_button_tooltip[firefox]' - 22:57:43
+[END] Test 'tests/test_tool_tips_original.py::test_button_tooltip[firefox]' finished in 17.28 seconds.
+
+[START] Test 'tests/test_tool_tips_original.py::test_field_tooltip[chrome]' - 22:58:01
+[END] Test 'tests/test_tool_tips_original.py::test_field_tooltip[chrome]' finished in 6.20 seconds.
+
+[START] Test 'tests/test_tool_tips_original.py::test_field_tooltip[firefox]' - 22:58:07
+[END] Test 'tests/test_tool_tips_original.py::test_field_tooltip[firefox]' finished in 23.85 seconds.
+
+[START] Test 'tests/test_tool_tips_original.py::test_button_tooltip[chrome]' - 22:59:03
+[END] Test 'tests/test_tool_tips_original.py::test_button_tooltip[chrome]' finished in 8.87 seconds.
+
+[START] Test 'tests/test_tool_tips_original.py::test_button_tooltip[firefox]' - 22:59:12
+[END] Test 'tests/test_tool_tips_original.py::test_button_tooltip[firefox]' finished in 15.99 seconds.
+
+[START] Test 'tests/test_tool_tips_original.py::test_field_tooltip[chrome]' - 22:59:28
+[END] Test 'tests/test_tool_tips_original.py::test_field_tooltip[chrome]' finished in 7.31 seconds.
+
+[START] Test 'tests/test_tool_tips_original.py::test_field_tooltip[firefox]' - 22:59:35
+[END] Test 'tests/test_tool_tips_original.py::test_field_tooltip[firefox]' finished in 22.40 seconds.
+
+[START] Test 'Day1/test_home_page.py::test_verify_demoqa_title[chrome]' - 23:06:57
+
+[START] Test 'Day1/test_home_page.py::test_verify_demoqa_title[chrome]' - 23:07:23
+
+[START] Test 'Day1/test_home_page.py::test_verify_demoqa_title[chrome]' - 23:08:15
+
+[START] Test 'Day1/test_home_page.py::test_verify_demoqa_title[chrome]' - 23:08:48
+N/A
+N/A
+[END] Test 'Day1/test_home_page.py::test_verify_demoqa_title[chrome]' finished in 6.80 seconds.
+N/A
+
+[START] Test 'Day1/test_home_page.py::test_verify_demoqa_title[firefox]' - 23:08:54
+N/A
+N/A
+[END] Test 'Day1/test_home_page.py::test_verify_demoqa_title[firefox]' finished in 16.89 seconds.
+N/A
+
+[START] Test 'Day1/test_home_page.py::test_verify_demoqa_title[chrome]' - 23:09:34
+[END] Test 'Day1/test_home_page.py::test_verify_demoqa_title[chrome]' finished in 7.18 seconds.
+
+[START] Test 'Day1/test_home_page.py::test_verify_demoqa_title[firefox]' - 23:09:41
+[END] Test 'Day1/test_home_page.py::test_verify_demoqa_title[firefox]' finished in 13.33 seconds.
+
+[START] Test 'Day1/test_home_page.py::test_verify_demoqa_title[chrome]' - 23:15:00
+[END] Test 'Day1/test_home_page.py::test_verify_demoqa_title[chrome]' finished in 7.62 seconds.
+
+[START] Test 'Day1/test_home_page.py::test_verify_demoqa_title[firefox]' - 23:15:08
+[END] Test 'Day1/test_home_page.py::test_verify_demoqa_title[firefox]' finished in 15.33 seconds.
+
+[START] Test 'tests/test_tool_tips_original.py::test_button_tooltip[chrome]' - 23:17:42
+[END] Test 'tests/test_tool_tips_original.py::test_button_tooltip[chrome]' finished in 8.89 seconds.
+
+[START] Test 'tests/test_tool_tips_original.py::test_button_tooltip[firefox]' - 23:17:51
+[END] Test 'tests/test_tool_tips_original.py::test_button_tooltip[firefox]' finished in 16.70 seconds.
+
+[START] Test 'tests/test_tool_tips_original.py::test_field_tooltip[chrome]' - 23:18:08
+[END] Test 'tests/test_tool_tips_original.py::test_field_tooltip[chrome]' finished in 16.54 seconds.
+
+[START] Test 'tests/test_tool_tips_original.py::test_field_tooltip[firefox]' - 23:18:24
+[END] Test 'tests/test_tool_tips_original.py::test_field_tooltip[firefox]' finished in 15.63 seconds.
+
+[START] Test 'tests/test_tool_tips_original.py::test_button_tooltip' - 08:29:17
+[END] Test 'tests/test_tool_tips_original.py::test_button_tooltip' finished in 0.02 seconds.
+
+[START] Test 'tests/test_tool_tips_original.py::test_field_tooltip' - 08:29:17
+[END] Test 'tests/test_tool_tips_original.py::test_field_tooltip' finished in 0.01 seconds.
+
+[START] Test 'tests/test_tool_tips_original.py::test_button_tooltip' - 08:30:21
+[END] Test 'tests/test_tool_tips_original.py::test_button_tooltip' finished in 5.55 seconds.
+
+[START] Test 'tests/test_tool_tips_original.py::test_field_tooltip' - 08:30:27
+[END] Test 'tests/test_tool_tips_original.py::test_field_tooltip' finished in 1.28 seconds.
+
+[START] Test 'tests/test_tool_tips_original.py::test_button_tooltip' - 08:32:25
+[END] Test 'tests/test_tool_tips_original.py::test_button_tooltip' finished in 8.75 seconds.
+
+[START] Test 'tests/test_tool_tips_original.py::test_field_tooltip' - 08:32:33
+[END] Test 'tests/test_tool_tips_original.py::test_field_tooltip' finished in 1.39 seconds.
+
+[START] Test 'tests/test_tool_tips_original.py::test_button_tooltip' - 09:48:31
+[END] Test 'tests/test_tool_tips_original.py::test_button_tooltip' finished in 9.91 seconds.
+
+[START] Test 'tests/test_tool_tips_original.py::test_field_tooltip' - 09:48:41
+[END] Test 'tests/test_tool_tips_original.py::test_field_tooltip' finished in 1.19 seconds.
+
+[START] Test 'tests/test_tool_tips_original.py::test_button_tooltip' - 09:49:37
+[END] Test 'tests/test_tool_tips_original.py::test_button_tooltip' finished in 3.40 seconds.
+
+[START] Test 'tests/test_tool_tips_original.py::test_field_tooltip' - 09:49:40
+[END] Test 'tests/test_tool_tips_original.py::test_field_tooltip' finished in 1.16 seconds.
+
+[START] Test 'tests/test_tool_tips_original.py::test_button_tooltip' - 09:50:21
+[END] Test 'tests/test_tool_tips_original.py::test_button_tooltip' finished in 6.96 seconds.
+
+[START] Test 'tests/test_tool_tips_original.py::test_field_tooltip' - 09:50:28
+[END] Test 'tests/test_tool_tips_original.py::test_field_tooltip' finished in 1.18 seconds.
+
+[START] Test 'tests/test_tool_tips.py::test_button_tooltip' - 09:51:26
+[END] Test 'tests/test_tool_tips.py::test_button_tooltip' finished in 7.59 seconds.
+
+[START] Test 'tests/test_tool_tips.py::test_field_tooltip' - 09:51:34
+[END] Test 'tests/test_tool_tips.py::test_field_tooltip' finished in 5.66 seconds.
+
+[START] Test 'tests/test_tool_tips.py::test_button_tooltip' - 09:54:22
+[END] Test 'tests/test_tool_tips.py::test_button_tooltip' finished in 12.32 seconds.
+
+[START] Test 'tests/test_tool_tips.py::test_field_tooltip' - 09:54:34
+[END] Test 'tests/test_tool_tips.py::test_field_tooltip' finished in 7.23 seconds.
+
+[START] Test 'tests/test_tool_tips.py::test_button_tooltip' - 09:55:06
+[END] Test 'tests/test_tool_tips.py::test_button_tooltip' finished in 17.45 seconds.
+
+[START] Test 'tests/test_tool_tips.py::test_button_tooltip' - 09:55:30
+[END] Test 'tests/test_tool_tips.py::test_button_tooltip' finished in 7.68 seconds.
+
+[START] Test 'tests/test_tool_tips.py::test_button_tooltip' - 09:56:58
+[END] Test 'tests/test_tool_tips.py::test_button_tooltip' finished in 8.76 seconds.
+
+[START] Test 'tests/test_tool_tips.py::test_field_tooltip' - 09:57:07
+[END] Test 'tests/test_tool_tips.py::test_field_tooltip' finished in 6.44 seconds.
+
+[START] Test 'tests/test_tool_tips.py::test_button_tooltip' - 10:07:13
+[END] Test 'tests/test_tool_tips.py::test_button_tooltip' finished in 10.06 seconds.
+
+[START] Test 'tests/test_tool_tips.py::test_button_tooltip' - 10:08:51
+[END] Test 'tests/test_tool_tips.py::test_button_tooltip' finished in 7.15 seconds.
+
+[START] Test 'tests/test_tool_tips.py::test_field_tooltip' - 10:08:58
+[END] Test 'tests/test_tool_tips.py::test_field_tooltip' finished in 16.62 seconds.
+
+[START] Test 'tests/test_tool_tips.py::test_button_tooltip' - 10:10:06
+[END] Test 'tests/test_tool_tips.py::test_button_tooltip' finished in 7.75 seconds.
+
+[START] Test 'tests/test_tool_tips.py::test_field_tooltip' - 10:10:14
+[END] Test 'tests/test_tool_tips.py::test_field_tooltip' finished in 6.26 seconds.

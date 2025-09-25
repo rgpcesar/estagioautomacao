@@ -1,5 +1,3 @@
-
-
 import pytest
 from pages.elements_page import ElementsPage
 
@@ -27,6 +25,7 @@ def test_locate_by_css_selector(driver):
     assert elements_page.check_box_is_visible()
 
 @pytest.mark.smoke
+@pytest.mark.regression
 def test_locate_by_xpath(driver):
     elements_page = ElementsPage(driver)
     elements_page.navigate()

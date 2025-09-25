@@ -4,8 +4,13 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import Select
 from selenium.webdriver.common.keys import Keys
 
-class PracticeFormPage:
-    """Page Object for the DemoQA Practice Form page."""
+class PracticeFormPage: # Form page Practice
+    """Page Object for the DemoQA Practice Form page.
+    Returns:
+    - Navigate: method to go to url
+    - fill_form: method to fill a form
+    - submit: action to submit form
+    - check_modal_visible: method to check visibility of modal webelement """
 
     def __init__(self, driver):
         self.driver = driver
@@ -74,6 +79,8 @@ class PracticeFormPage:
 
     @allure.step("Submit the form")
     def submit_form(self):
+        button = self.driver.find_element(*self.submit_button)
+        self.driver.execute_script("arguments[0].scrollIntoView(true);", button)
         self.driver.find_element(*self.submit_button).click()
 
     @allure.step("Check if modal is present")

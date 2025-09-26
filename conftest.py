@@ -7,15 +7,15 @@ import csv
 
 report_data = []
 
-def pytest_addoption(parser):
-    parser.addoption("--browser", action="store", default="chrome", help="browser to execute tests (chrome or firefox)")
+# def pytest_addoption(parser):
+#     parser.addoption("--browser", action="store", default="chrome", help="browser to execute tests (chrome or firefox)")
 
 
-# @pytest.fixture(params=["chrome", "firefox"], scope="function")
-@pytest.fixture
+# @pytest.fixture
+@pytest.fixture(params=["chrome", "firefox"], scope="function")
 def driver(request):
-    browser = request.config.getoption("--browser").lower()
-    # browser = request.param
+    # browser = request.config.getoption("--browser").lower()
+    browser = request.param
     if browser == "chrome":
         driver_instance = webdriver.Chrome()
     elif browser == "firefox":
@@ -28,11 +28,6 @@ def driver(request):
 
     yield driver_instance
     driver_instance.quit()
-
-# @pytest.fixture(scope="session")
-# def test_data():
-#     with open("data/test_data.json") as f:
-#         return json.load(f)
 
 LOG_FILE = Path("test_durations.log")
 

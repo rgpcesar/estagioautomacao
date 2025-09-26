@@ -251,3 +251,183 @@ N/A
 
 [START] Test 'tests/test_scopes_2.py::test_mod2' - 23:21:57
 [END] Test 'tests/test_scopes_2.py::test_mod2' finished in 0.00 seconds.
+
+[START] Test 'tests/test_tool_tips.py::test_button_tooltip[chrome]' - 08:10:46
+[END] Test 'tests/test_tool_tips.py::test_button_tooltip[chrome]' finished in 11.85 seconds.
+
+[START] Test 'tests/test_tool_tips.py::test_button_tooltip[firefox]' - 08:10:57
+[END] Test 'tests/test_tool_tips.py::test_button_tooltip[firefox]' finished in 16.27 seconds.
+
+[START] Test 'tests/test_tool_tips.py::test_field_tooltip[chrome]' - 08:11:14
+[END] Test 'tests/test_tool_tips.py::test_field_tooltip[chrome]' finished in 7.64 seconds.
+
+[START] Test 'tests/test_tool_tips.py::test_field_tooltip[firefox]' - 08:11:21
+[END] Test 'tests/test_tool_tips.py::test_field_tooltip[firefox]' finished in 16.81 seconds.
+
+[START] Test 'tests/test_practice_form.py::test_fill_practice_form[chrome-data0]' - 09:01:09
+[END] Test 'tests/test_practice_form.py::test_fill_practice_form[chrome-data0]' finished in 9.75 seconds.
+
+[START] Test 'tests/test_practice_form.py::test_fill_practice_form[chrome-data1]' - 09:01:19
+[END] Test 'tests/test_practice_form.py::test_fill_practice_form[chrome-data1]' finished in 7.41 seconds.
+
+[START] Test 'tests/test_practice_form.py::test_fill_practice_form[firefox-data0]' - 09:01:26
+[END] Test 'tests/test_practice_form.py::test_fill_practice_form[firefox-data0]' finished in 14.29 seconds.
+
+[START] Test 'tests/test_practice_form.py::test_fill_practice_form[firefox-data1]' - 09:01:40
+[END] Test 'tests/test_practice_form.py::test_fill_practice_form[firefox-data1]' finished in 13.24 seconds.
+
+[START] Test 'tests/test_practice_form.py::test_fill_practice_form[chrome-data0]' - 09:05:08
+[END] Test 'tests/test_practice_form.py::test_fill_practice_form[chrome-data0]' finished in 10.22 seconds.
+
+[START] Test 'tests/test_practice_form.py::test_fill_practice_form[chrome-data1]' - 09:05:18
+[END] Test 'tests/test_practice_form.py::test_fill_practice_form[chrome-data1]' finished in 9.41 seconds.
+
+[START] Test 'tests/test_practice_form.py::test_fill_practice_form[firefox-data0]' - 09:05:28
+[END] Test 'tests/test_practice_form.py::test_fill_practice_form[firefox-data0]' finished in 16.22 seconds.
+
+[START] Test 'tests/test_practice_form.py::test_fill_practice_form[firefox-data1]' - 09:05:44
+[END] Test 'tests/test_practice_form.py::test_fill_practice_form[firefox-data1]' finished in 15.25 seconds.
+
+[START] Test 'tests/test_practice_form.py::test_fill_practice_form[chrome-data0]' - 09:08:27
+[END] Test 'tests/test_practice_form.py::test_fill_practice_form[chrome-data0]' finished in 13.18 seconds.
+
+[START] Test 'tests/test_practice_form.py::test_fill_practice_form[chrome-data1]' - 09:08:40
+[END] Test 'tests/test_practice_form.py::test_fill_practice_form[chrome-data1]' finished in 10.56 seconds.
+
+[START] Test 'tests/test_practice_form.py::test_fill_practice_form[firefox-data0]' - 09:08:50
+[END] Test 'tests/test_practice_form.py::test_fill_practice_form[firefox-data0]' finished in 17.90 seconds.
+
+[START] Test 'tests/test_practice_form.py::test_fill_practice_form[firefox-data1]' - 09:09:08
+[END] Test 'tests/test_practice_form.py::test_fill_practice_form[firefox-data1]' finished in 16.10 seconds.
+
+[START] Test 'tests/test_practice_form.py::test_fill_practice_form[chrome-data0]' - 09:11:43
+[END] Test 'tests/test_practice_form.py::test_fill_practice_form[chrome-data0]' finished in 14.84 seconds.
+
+[START] Test 'tests/test_practice_form.py::test_fill_practice_form[chrome-data1]' - 09:11:57
+[END] Test 'tests/test_practice_form.py::test_fill_practice_form[chrome-data1]' finished in 12.03 seconds.
+
+[START] Test 'tests/test_practice_form.py::test_fill_practice_form[firefox-data0]' - 09:12:09
+[END] Test 'tests/test_practice_form.py::test_fill_practice_form[firefox-data0]' finished in 18.93 seconds.
+
+[START] Test 'tests/test_practice_form.py::test_fill_practice_form[firefox-data1]' - 09:12:28
+[END] Test 'tests/test_practice_form.py::test_fill_practice_form[firefox-data1]' finished in 13.13 seconds.
+
+[START] Test 'tests/test_practice_form.py::test_fill_practice_form[chrome-data0]' - 09:13:45
+[END] Test 'tests/test_practice_form.py::test_fill_practice_form[chrome-data0]' finished in 12.19 seconds.
+
+[START] Test 'tests/test_practice_form.py::test_fill_practice_form[chrome-data1]' - 09:13:57
+[END] Test 'tests/test_practice_form.py::test_fill_practice_form[chrome-data1]' finished in 10.61 seconds.
+
+[START] Test 'tests/test_practice_form.py::test_fill_practice_form[firefox-data0]' - 09:14:07
+[END] Test 'tests/test_practice_form.py::test_fill_practice_form[firefox-data0]' finished in 14.40 seconds.
+
+[START] Test 'tests/test_practice_form.py::test_fill_practice_form[firefox-data1]' - 09:14:22
+[END] Test 'tests/test_practice_form.py::test_fill_practice_form[firefox-data1]' finished in 17.11 seconds.
+
+[START] Test 'tests/test_practice_form.py::test_fill_practice_form[chrome-data0]' - 09:16:32
+[END] Test 'tests/test_practice_form.py::test_fill_practice_form[chrome-data0]' finished in 19.02 seconds.
+
+[START] Test 'tests/test_practice_form.py::test_fill_practice_form[chrome-data1]' - 09:16:51
+[END] Test 'tests/test_practice_form.py::test_fill_practice_form[chrome-data1]' finished in 14.70 seconds.
+
+[START] Test 'tests/test_practice_form.py::test_fill_practice_form[firefox-data0]' - 09:17:06
+[END] Test 'tests/test_practice_form.py::test_fill_practice_form[firefox-data0]' finished in 19.95 seconds.
+
+[START] Test 'tests/test_practice_form.py::test_fill_practice_form[firefox-data1]' - 09:17:26
+[END] Test 'tests/test_practice_form.py::test_fill_practice_form[firefox-data1]' finished in 17.17 seconds.
+
+[START] Test 'tests/test_practice_form.py::test_fill_practice_form[chrome-data0]' - 09:20:19
+[END] Test 'tests/test_practice_form.py::test_fill_practice_form[chrome-data0]' finished in 9.24 seconds.
+
+[START] Test 'tests/test_practice_form.py::test_fill_practice_form[chrome-data1]' - 09:20:29
+[END] Test 'tests/test_practice_form.py::test_fill_practice_form[chrome-data1]' finished in 7.67 seconds.
+
+[START] Test 'tests/test_practice_form.py::test_fill_practice_form[firefox-data0]' - 09:20:36
+[END] Test 'tests/test_practice_form.py::test_fill_practice_form[firefox-data0]' finished in 15.64 seconds.
+
+[START] Test 'tests/test_practice_form.py::test_fill_practice_form[firefox-data1]' - 09:20:52
+[END] Test 'tests/test_practice_form.py::test_fill_practice_form[firefox-data1]' finished in 13.25 seconds.
+
+[START] Test 'tests/test_practice_form.py::test_fill_practice_form[chrome-data0]' - 09:21:54
+[END] Test 'tests/test_practice_form.py::test_fill_practice_form[chrome-data0]' finished in 12.95 seconds.
+
+[START] Test 'tests/test_practice_form.py::test_fill_practice_form[chrome-data1]' - 09:22:07
+[END] Test 'tests/test_practice_form.py::test_fill_practice_form[chrome-data1]' finished in 10.89 seconds.
+
+[START] Test 'tests/test_practice_form.py::test_fill_practice_form[firefox-data0]' - 09:22:18
+[END] Test 'tests/test_practice_form.py::test_fill_practice_form[firefox-data0]' finished in 18.73 seconds.
+
+[START] Test 'tests/test_practice_form.py::test_fill_practice_form[firefox-data1]' - 09:22:36
+[END] Test 'tests/test_practice_form.py::test_fill_practice_form[firefox-data1]' finished in 15.90 seconds.
+
+[START] Test 'tests/test_practice_form.py::test_fill_practice_form[chrome-data0]' - 09:34:04
+[END] Test 'tests/test_practice_form.py::test_fill_practice_form[chrome-data0]' finished in 12.61 seconds.
+
+[START] Test 'tests/test_practice_form.py::test_fill_practice_form[chrome-data1]' - 09:34:16
+[END] Test 'tests/test_practice_form.py::test_fill_practice_form[chrome-data1]' finished in 7.32 seconds.
+
+[START] Test 'tests/test_practice_form.py::test_fill_practice_form[firefox-data0]' - 09:34:24
+[END] Test 'tests/test_practice_form.py::test_fill_practice_form[firefox-data0]' finished in 18.69 seconds.
+
+[START] Test 'tests/test_practice_form.py::test_fill_practice_form[firefox-data1]' - 09:34:42
+[END] Test 'tests/test_practice_form.py::test_fill_practice_form[firefox-data1]' finished in 14.91 seconds.
+
+[START] Test 'tests/test_practice_form.py::test_fill_practice_form[chrome-data0]' - 09:35:44
+[END] Test 'tests/test_practice_form.py::test_fill_practice_form[chrome-data0]' finished in 8.85 seconds.
+
+[START] Test 'tests/test_practice_form.py::test_fill_practice_form[chrome-data1]' - 09:35:53
+[END] Test 'tests/test_practice_form.py::test_fill_practice_form[chrome-data1]' finished in 6.92 seconds.
+
+[START] Test 'tests/test_practice_form.py::test_fill_practice_form[firefox-data0]' - 09:36:00
+[END] Test 'tests/test_practice_form.py::test_fill_practice_form[firefox-data0]' finished in 16.78 seconds.
+
+[START] Test 'tests/test_practice_form.py::test_fill_practice_form[firefox-data1]' - 09:36:16
+[END] Test 'tests/test_practice_form.py::test_fill_practice_form[firefox-data1]' finished in 13.01 seconds.
+
+[START] Test 'tests/test_practice_form.py::test_fill_practice_form[chrome-data0]' - 09:38:05
+[END] Test 'tests/test_practice_form.py::test_fill_practice_form[chrome-data0]' finished in 8.23 seconds.
+
+[START] Test 'tests/test_practice_form.py::test_fill_practice_form[chrome-data1]' - 09:38:13
+[END] Test 'tests/test_practice_form.py::test_fill_practice_form[chrome-data1]' finished in 7.21 seconds.
+
+[START] Test 'tests/test_practice_form.py::test_fill_practice_form[firefox-data0]' - 09:38:20
+[END] Test 'tests/test_practice_form.py::test_fill_practice_form[firefox-data0]' finished in 15.19 seconds.
+
+[START] Test 'tests/test_practice_form.py::test_fill_practice_form[firefox-data1]' - 09:38:36
+[END] Test 'tests/test_practice_form.py::test_fill_practice_form[firefox-data1]' finished in 14.11 seconds.
+
+[START] Test 'tests/test_practice_form.py::test_fill_practice_form[chrome-data0]' - 09:44:39
+[END] Test 'tests/test_practice_form.py::test_fill_practice_form[chrome-data0]' finished in 9.07 seconds.
+
+[START] Test 'tests/test_practice_form.py::test_fill_practice_form[chrome-data1]' - 09:44:48
+[END] Test 'tests/test_practice_form.py::test_fill_practice_form[chrome-data1]' finished in 7.40 seconds.
+
+[START] Test 'tests/test_practice_form.py::test_fill_practice_form[firefox-data0]' - 09:44:56
+[END] Test 'tests/test_practice_form.py::test_fill_practice_form[firefox-data0]' finished in 17.05 seconds.
+
+[START] Test 'tests/test_practice_form.py::test_fill_practice_form[firefox-data1]' - 09:45:13
+[END] Test 'tests/test_practice_form.py::test_fill_practice_form[firefox-data1]' finished in 13.42 seconds.
+
+[START] Test 'tests/test_practice_form.py::test_fill_practice_form[chrome-data0]' - 09:46:36
+[END] Test 'tests/test_practice_form.py::test_fill_practice_form[chrome-data0]' finished in 8.52 seconds.
+
+[START] Test 'tests/test_practice_form.py::test_fill_practice_form[chrome-data1]' - 09:46:44
+[END] Test 'tests/test_practice_form.py::test_fill_practice_form[chrome-data1]' finished in 6.80 seconds.
+
+[START] Test 'tests/test_practice_form.py::test_fill_practice_form[firefox-data0]' - 09:46:51
+[END] Test 'tests/test_practice_form.py::test_fill_practice_form[firefox-data0]' finished in 15.73 seconds.
+
+[START] Test 'tests/test_practice_form.py::test_fill_practice_form[firefox-data1]' - 09:47:07
+[END] Test 'tests/test_practice_form.py::test_fill_practice_form[firefox-data1]' finished in 13.53 seconds.
+
+[START] Test 'tests/test_practice_form.py::test_fill_practice_form[chrome-data0]' - 09:51:57
+[END] Test 'tests/test_practice_form.py::test_fill_practice_form[chrome-data0]' finished in 16.39 seconds.
+
+[START] Test 'tests/test_practice_form.py::test_fill_practice_form[chrome-data1]' - 09:52:13
+[END] Test 'tests/test_practice_form.py::test_fill_practice_form[chrome-data1]' finished in 11.99 seconds.
+
+[START] Test 'tests/test_practice_form.py::test_fill_practice_form[firefox-data0]' - 09:52:25
+[END] Test 'tests/test_practice_form.py::test_fill_practice_form[firefox-data0]' finished in 22.86 seconds.
+
+[START] Test 'tests/test_practice_form.py::test_fill_practice_form[firefox-data1]' - 09:52:48
+[END] Test 'tests/test_practice_form.py::test_fill_practice_form[firefox-data1]' finished in 18.88 seconds.

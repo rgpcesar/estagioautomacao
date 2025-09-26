@@ -33,8 +33,6 @@ def driver(request, browser):
             options = webdriver.ChromeOptions()
         elif browser == "firefox":
             options = webdriver.FirefoxOptions()
-        elif browser == "edge":
-            options = webdriver.EdgeOptions()
         else:
             raise ValueError(f"Browser '{browser}' is not supported for remote execution.")
             

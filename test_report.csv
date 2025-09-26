@@ -1,5 +1,5 @@
 browser,test_case_name,status,timestamp
-N/a,test_one,Passed,0.0001s
-N/a,test_two,Passed,0.0001s
-N/a,test_three,Passed,0.0001s
-N/a,test_mod2,Passed,0.0001s
+Chrome,test_fill_practice_form[chrome-data0],Passed,12.0187s
+Chrome,test_fill_practice_form[chrome-data1],Passed,10.5100s
+Firefox,test_fill_practice_form[firefox-data0],Passed,14.7172s
+Firefox,test_fill_practice_form[firefox-data1],Passed,14.1854s

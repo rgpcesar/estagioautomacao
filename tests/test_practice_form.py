@@ -8,6 +8,7 @@ def test_fill_practice_form(driver, data):
     form_page = PracticeFormPage(driver)
     form_page.navigate()
     form_page.fill_form(data)
+    time.sleep(2)
     form_page.submit_form() 
     time.sleep(1)
     assert form_page.check_modal_visible()

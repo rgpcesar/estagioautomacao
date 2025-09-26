@@ -3,6 +3,8 @@ import allure
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import Select
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
 class PracticeFormPage: # Form page Practice
     """Page Object for the DemoQA Practice Form page.
@@ -22,6 +24,7 @@ class PracticeFormPage: # Form page Practice
         self.mobile_input = (By.ID, "userNumber")
         self.dob_input = (By.ID, "dateOfBirthInput")
         self.subjects_input = (By.ID, "subjectsInput")
+        self.subjects_text = (By.ID, "react-select-2-option-0")
         self.hobbies_checkbox = (By.XPATH, "//label[text()='{}']")
         self.picture_upload = (By.ID, "uploadPicture")
         self.address_textarea = (By.ID, "currentAddress")
@@ -29,6 +32,7 @@ class PracticeFormPage: # Form page Practice
         self.city_dropdown = (By.ID, "city")
         self.submit_button = (By.ID, "submit")
         self.out_put_modal = (By.ID, "example-modal-sizes-title-lg")
+        self.wait = WebDriverWait(self.driver, 10)
 
     @allure.step("Navigate to Practice Form page")
     def navigate(self):
@@ -55,9 +59,13 @@ class PracticeFormPage: # Form page Practice
 
         with allure.step(f"Select subjects: {data['subjects']}"):
             subjects_field = self.driver.find_element(*self.subjects_input)
+            self.driver.execute_script("arguments[0].scrollIntoView(true);", subjects_field)
             for subject in data["subjects"]:
                 subjects_field.send_keys(subject)
-                subjects_field.send_keys(Keys.ENTER)
+                subjects_text = self.wait.until(
+                    EC.element_to_be_clickable(self.subjects_text)
+                )
+                subjects_text.click()
 
         with allure.step(f"Select hobbies: {data['hobbies']}"):
             for hobby in data["hobbies"]:
@@ -66,16 +74,18 @@ class PracticeFormPage: # Form page Practice
 
         with allure.step(f"Fill address: {data['address']}"):
             self.driver.find_element(*self.address_textarea).send_keys(data["address"])
-        
+    
         with allure.step(f"Select state and city: {data['state']} - {data['city']}"):
             state_element = self.driver.find_element(*self.state_dropdown)
             self.driver.execute_script("arguments[0].scrollIntoView(true);", state_element)
+            time.sleep(1)
             state_element.click()
             (By.XPATH, "//div[contains(text(), 'NCR')]")
             self.driver.find_element(By.XPATH, f"//div[contains(text(), '{data['state']}')]").click()
             city_element = self.driver.find_element(*self.city_dropdown)
             city_element.click()
             self.driver.find_element(By.XPATH, f"//div[contains(text(), '{data['city']}')]").click()
+        
 
     @allure.step("Submit the form")
     def submit_form(self):

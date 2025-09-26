@@ -55,6 +55,8 @@
         <ul>
             <li>Updating conftest to run same test case in different browsers</li>
             <li>Generating new report with execution data</li>
+            <li>What are hooks and some examples</li>
+            <li>Pytest fixture scopes</li>
             <li>Parallel Execution with `pytest-xdist`</li>
         </ul>
     </div>
@@ -187,7 +189,190 @@ Firefox,test_button_tooltip[firefox],Passed,8.5066s
 Firefox,test_field_tooltip[firefox],Passed,8.2310s</code></pre>
     </div>
     <div class="slide">
-        <h2>3. Parallel Execution with `pytest-xdist`</h2>
+        <h2>3. Pytest Hooks</h2>
+        <p><strong>What are Pytest Hooks?</strong></p>
+        <ul>
+            <li>Pytest hooks are "plug-in" points that let you extend or customize how pytest behaves before, during, or after a test run.</li>
+            <li>They are functions with specific names that pytest automatically looks for and calls at different stages of the test process.</li>
+            <li>Think of them like event listeners or interceptors in your testing lifecycle.</li>
+        </ul>
+        <p><strong>Why Use Hooks?</strong></p>
+        <p>Let’s say you want to:</p>
+        <ul>
+            <li>Add custom logging before each test.</li>
+            <li>Connect to a test database before the session starts.</li>
+            <li>Modify test items dynamically.</li>
+            <li>Collect extra metadata during the test run.</li>
+        </ul>
+        <p>Pytest hooks let you do all this <strong> without touching your actual tests</strong></p>
+        <h3>Session-Level Hooks</h3>
+<pre><code class="language-python"># conftest.py
+
+def pytest_sessionstart(session):
+    # Called before tests run
+    pass
+
+def pytest_sessionfinish(session, exitstatus):
+    # Called after all tests run
+    pass</code></pre>
+    <h3>Test Collection Hooks</h3>
+    <pre><code>def pytest_collection_modifyitems(session, config, items):
+    items.reverse()  # run tests in reverse order</code></pre>
+
+<pre><code class="language-python">def pytest_collection_modifyitems(config, items):
+    for item in items:
+        if "slow" in item.keywords and not config.getoption("--runslow"):
+            item.add_marker(pytest.mark.skip(reason="need --runslow option to run"))</code></pre>
+
+            <h3>Test Execution Hooks</h3>
+    <pre><code>def pytest_runtest_setup(item):
+    # Before test
+
+def pytest_runtest_call(item):
+    # Actual test call
+
+def pytest_runtest_teardown(item):
+    # After test</code></pre>
+    <h3>Reporting Hooks</h3>
+    <pre><code>@pytest.hookimpl(hookwrapper=True)
+def pytest_runtest_makereport(item, call):
+
+    outcome = yield
+    report = outcome.get_result()
+    extra = getattr(report, "extra", [])
+    if report.when == "call": # and report.failed:
+
+        status = 'Passed' if report.passed else 'Failed'
+        browser = getattr(item, 'browser', 'N/A')
+        test_name = item.name
+        duration = f"{report.duration:.4f}s"</code></pre>
+
+    </div>
+    <div class="slide">
+        <h2>5. What Are Pytest Fixture Scopes?</h2>
+        <p>Pytest allows you to define fixtures with different scopes, which determine how often the fixture is invoked.</p>
+        <table border="1" cellpadding="8" cellspacing="0">
+  <thead>
+    <tr>
+      <th>Scope</th>
+      <th>How Often It Runs</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>function</code></td>
+      <td>Every test function (default)</td>
+    </tr>
+    <tr>
+      <td><code>class</code></td>
+      <td>Once per test class</td>
+    </tr>
+    <tr>
+      <td><code>module</code></td>
+      <td>Once per module (i.e., per Python file)</td>
+    </tr>
+    <tr>
+      <td><code>session</code></td>
+      <td>Once for the entire test session (across all files)</td>
+    </tr>
+  </tbody>
+</table>
+<h3>Example Structure</h3>
+<p>We’ll use print statements to visualize when the fixtures are being set up and torn down.</p>
+<p>1. Add these new fixtures into <strong><code>conftest.py</code></strong></p>
+<pre><code># conftest.py 
+
+@pytest.fixture(scope="class")
+def class_resource():
+    print("\n[SETUP] class_resource")
+    yield "class fixture"
+    print("[TEARDOWN] class_resource")
+
+@pytest.fixture(scope="module")
+def module_resource():
+    print("\n[SETUP] module_resource")
+    yield "module fixture"
+    print("[TEARDOWN] module_resource")
+
+@pytest.fixture(scope="session")
+def session_resource():
+    print("\n[SETUP] session_resource")
+    yield "session fixture"
+    print("[TEARDOWN] session_resource")</code></pre>
+    <p>2. Create a new script: <strong><code>tests/test_scopes_1.py</code></strong></p>
+    <pre><code># test_scopes.py
+import pytest
+
+class TestGroupA:
+    def test_one(self, class_resource, module_resource, session_resource):
+        print("Running TestGroupA.test_one")
+
+    def test_two(self, class_resource, module_resource, session_resource):
+        print("Running TestGroupA.test_two")
+
+
+class TestGroupB:
+    def test_three(self, class_resource, module_resource, session_resource):
+        print("Running TestGroupB.test_three")
+</code></pre>
+    <p>3. Expected Output When Running:</p>
+    <pre><code>pytest tests/test_scopes_1.py -s</code></pre>
+    <pre><code># OUTPUT terminal
+
+[SETUP] session_resource
+[SETUP] module_resource
+
+[SETUP] class_resource
+Running TestGroupA.test_one
+Running TestGroupA.test_two
+[TEARDOWN] class_resource
+
+[SETUP] class_resource
+Running TestGroupB.test_three
+[TEARDOWN] class_resource
+
+[TEARDOWN] module_resource
+[TEARDOWN] session_resource
+</code></pre>
+<h3>Analysis</h3>
+
+<ol>
+  <li>
+    <strong>Session Scope (<code>scope="session"</code>)</strong>
+    <ul>
+      <li>Initialized once for the whole test run.</li>
+      <li>Shared across all modules and test classes.</li>
+      <li>Use case: expensive setup like DB connection, Docker container.</li>
+    </ul>
+  </li>
+
+  <li>
+    <strong>Module Scope (<code>scope="module"</code>)</strong>
+    <ul>
+      <li>Runs once per Python test file.</li>
+      <li>Even if you have multiple classes in one file, it will still run only once.</li>
+      <li>Use case: file-level shared resource like reading static data.</li>
+    </ul>
+  </li>
+
+  <li>
+    <strong>Class Scope (<code>scope="class"</code>)</strong>
+    <ul>
+      <li>Runs once per test class.</li>
+      <li>All methods in the same test class share the same fixture instance.</li>
+      <li>Use case: preparing resources specific to test class behavior.</li>
+    </ul>
+  </li>
+</ol>
+
+
+    </div>
+
+   
+
+
+    <div class="slide">
+        <h2>5. Parallel Execution with `pytest-xdist`</h2>
         <p><strong>pytest-xdist</strong> is a Pytest plugin that allows you to:</p>
         <ul>
         <li><strong>Run tests in parallel</strong> (multiple test processes at the same time).</li>

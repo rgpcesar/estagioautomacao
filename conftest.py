@@ -109,3 +109,22 @@ def pytest_sessionfinish(session):
         dict_writer.writerows(sorted_reports)
 
     print("\nReport 'test_report.csv' generated successfully")
+
+
+@pytest.fixture(scope="class")
+def class_resource():
+    print("\n[SETUP] class_resource")
+    yield "class fixture"
+    print("[TEARDOWN] class_resource")
+
+@pytest.fixture(scope="module")
+def module_resource():
+    print("\n[SETUP] module_resource")
+    yield "module fixture"
+    print("[TEARDOWN] module_resource")
+
+@pytest.fixture(scope="session")
+def session_resource():
+    print("\n[SETUP] session_resource")
+    yield "session fixture"
+    print("[TEARDOWN] session_resource")

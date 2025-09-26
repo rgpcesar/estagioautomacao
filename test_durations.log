@@ -194,3 +194,60 @@ N/A
 
 [START] Test 'tests/test_tool_tips.py::test_field_tooltip' - 10:10:14
 [END] Test 'tests/test_tool_tips.py::test_field_tooltip' finished in 6.26 seconds.
+
+[START] Test 'tests/test_scopes.py::TestGroupA::test_one' - 23:10:44
+[END] Test 'tests/test_scopes.py::TestGroupA::test_one' finished in 0.00 seconds.
+
+[START] Test 'tests/test_scopes.py::TestGroupA::test_two' - 23:10:44
+[END] Test 'tests/test_scopes.py::TestGroupA::test_two' finished in 0.00 seconds.
+
+[START] Test 'tests/test_scopes.py::TestGroupB::test_three' - 23:10:44
+[END] Test 'tests/test_scopes.py::TestGroupB::test_three' finished in 0.00 seconds.
+
+[START] Test 'tests/test_scopes_1.py::TestGroupA::test_one' - 23:17:37
+[END] Test 'tests/test_scopes_1.py::TestGroupA::test_one' finished in 0.00 seconds.
+
+[START] Test 'tests/test_scopes_1.py::TestGroupA::test_two' - 23:17:37
+[END] Test 'tests/test_scopes_1.py::TestGroupA::test_two' finished in 0.00 seconds.
+
+[START] Test 'tests/test_scopes_1.py::TestGroupB::test_three' - 23:17:37
+[END] Test 'tests/test_scopes_1.py::TestGroupB::test_three' finished in 0.00 seconds.
+
+[START] Test 'tests/test_scopes_2.py::test_mod2' - 23:17:37
+[END] Test 'tests/test_scopes_2.py::test_mod2' finished in 0.00 seconds.
+
+[START] Test 'tests/test_scopes_1.py::TestGroupA::test_one' - 23:17:48
+[END] Test 'tests/test_scopes_1.py::TestGroupA::test_one' finished in 0.00 seconds.
+
+[START] Test 'tests/test_scopes_1.py::TestGroupA::test_two' - 23:17:48
+[END] Test 'tests/test_scopes_1.py::TestGroupA::test_two' finished in 0.00 seconds.
+
+[START] Test 'tests/test_scopes_1.py::TestGroupB::test_three' - 23:17:48
+[END] Test 'tests/test_scopes_1.py::TestGroupB::test_three' finished in 0.00 seconds.
+
+[START] Test 'tests/test_scopes_2.py::test_mod2' - 23:17:48
+[END] Test 'tests/test_scopes_2.py::test_mod2' finished in 0.00 seconds.
+
+[START] Test 'tests/test_scopes_1.py::TestGroupA::test_one' - 23:20:39
+[END] Test 'tests/test_scopes_1.py::TestGroupA::test_one' finished in 0.01 seconds.
+
+[START] Test 'tests/test_scopes_1.py::TestGroupA::test_two' - 23:20:39
+[END] Test 'tests/test_scopes_1.py::TestGroupA::test_two' finished in 0.00 seconds.
+
+[START] Test 'tests/test_scopes_1.py::TestGroupB::test_three' - 23:20:39
+[END] Test 'tests/test_scopes_1.py::TestGroupB::test_three' finished in 0.00 seconds.
+
+[START] Test 'tests/test_scopes_2.py::test_mod2' - 23:20:39
+[END] Test 'tests/test_scopes_2.py::test_mod2' finished in 0.00 seconds.
+
+[START] Test 'tests/test_scopes_1.py::TestGroupA::test_one' - 23:21:57
+[END] Test 'tests/test_scopes_1.py::TestGroupA::test_one' finished in 0.00 seconds.
+
+[START] Test 'tests/test_scopes_1.py::TestGroupA::test_two' - 23:21:57
+[END] Test 'tests/test_scopes_1.py::TestGroupA::test_two' finished in 0.00 seconds.
+
+[START] Test 'tests/test_scopes_1.py::TestGroupB::test_three' - 23:21:57
+[END] Test 'tests/test_scopes_1.py::TestGroupB::test_three' finished in 0.00 seconds.
+
+[START] Test 'tests/test_scopes_2.py::test_mod2' - 23:21:57
+[END] Test 'tests/test_scopes_2.py::test_mod2' finished in 0.00 seconds.
